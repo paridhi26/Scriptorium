@@ -21,7 +21,7 @@ model User {
   lastName  String
   avatar    String?  //optional
   phone     String?  //optional
-  role Role @default(USER)
+  role Role @default(USER) //roll (if they have admin privileges or not)
   createdAt DateTime  @default(now())  //time it is created
   updatedAt DateTime  @updatedAt  //time it is updated
   codeTemplates CodeTemplate[]  //code templates
