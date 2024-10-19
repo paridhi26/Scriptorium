@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())  //different id for each user(primary key)
   email     String    @unique
   password  String
   firstName String
