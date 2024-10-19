@@ -15,15 +15,15 @@ datasource db {
 
 model User {
   id        Int       @id @default(autoincrement())  //different id for each user(primary key)
-  email     String    @unique
-  password  String
+  email     String    @unique //email-needs to be different for all users
+  password  String    //password
   firstName String
   lastName  String
-  avatar    String?
-  phone     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  codeTemplates CodeTemplate[]
+  avatar    String?  //optional
+  phone     String?  //optional
+  createdAt DateTime  @default(now())  //time it is created
+  updatedAt DateTime  @updatedAt  //time it is updated
+  codeTemplates CodeTemplate[]  //code templates
   blogPosts    BlogPost[]
   comments     Comment[]
   reports      InappropriateContentReport[]
