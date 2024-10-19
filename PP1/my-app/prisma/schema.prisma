@@ -21,6 +21,7 @@ model User {
   lastName  String
   avatar    String?  //optional
   phone     String?  //optional
+  role Role @default(USER)
   createdAt DateTime  @default(now())  //time it is created
   updatedAt DateTime  @updatedAt  //time it is updated
   codeTemplates CodeTemplate[]  //code templates
@@ -28,5 +29,11 @@ model User {
   comments     Comment[]
   reports      InappropriateContentReport[]
 }
+
+enum Role { 
+  USER 
+  ADMIN 
+}
+
 
 
