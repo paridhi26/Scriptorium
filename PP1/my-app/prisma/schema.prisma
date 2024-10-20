@@ -54,3 +54,23 @@ model CodeTemplate {
   blogPosts BlogPost[] 	@relation(“BlogTemplates”) // many to many relationship between BlogPosts and CodeTemplates
 }
 
+model BlogPost {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  content     String
+  tags        String[]  // List of strings to store tags directly 
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  codeTemplates CodeTemplate[] 	@relation(“BlogTemplates”)  // many to many relationship between BlogPosts and CodeTemplates
+  
+  // userId of user who created this BlogPost
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+
+  comments    Comment[]   // comments made on this blog post
+  reports      InappropriateContentReport[] 	//reports made about this blog
+  upvotes      Int
+  downvotes    Int
+}
