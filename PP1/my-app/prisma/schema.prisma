@@ -105,3 +105,10 @@ model InappropriateContentReport {
   commentId Int? //foreign key for comment
 }
 
+model ProgrammingLanguage {
+  id   Int    @id @default(autoincrement()) // Primary key, auto-incremented
+  name String @unique //name of the programming language 
+  codeTemplates CodeTemplate[] // One-to-many relationship with CodeTemplate, meaning a programming language can be associated with many code templates
+}
+
+
