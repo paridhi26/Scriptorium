@@ -111,4 +111,14 @@ model ProgrammingLanguage {
   codeTemplates CodeTemplate[] // One-to-many relationship with CodeTemplate, meaning a programming language can be associated with many code templates
 }
 
+model Session {
+  id        Int      @id @default(autoincrement()) // Primary key, auto-incremented
+  token     String   // Unique session token to authenticate the user during the session
+  user      User     @relation(fields: [userId], references: [id]) // Relationship to the User model, linking the session to a specific user
+  userId    Int      // Foreign key referencing the User model (who the session belongs to)
+  createdAt DateTime @default(now()) // Timestamp indicating when the session was created
+  expiresAt DateTime // Timestamp indicating when the session will expire
+}
+
+
 
