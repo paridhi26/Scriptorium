@@ -35,5 +35,22 @@ enum Role {
   ADMIN 
 }
 
+model CodeTemplate {
+  id        Int       @id @default(autoincrement())   // primary key
+  title     String
+  description   String    // explanation of the code in this template
+  code String		// actual code
+  tags      String[]    // List of strings to store tags directly 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  langId  Int       // the programming language this code template uses.
+  language  ProgrammingLanguage @relation(fields: [langId], references: [id])
 
+  userId    Int     // the user who created this code template. 
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // blog posts that link to this code template. 
+  blogPosts BlogPost[] 	@relation(“BlogTemplates”) // many to many relationship between BlogPosts and CodeTemplates
+}
 
