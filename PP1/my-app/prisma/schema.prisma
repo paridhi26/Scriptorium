@@ -74,3 +74,22 @@ model BlogPost {
   upvotes      Int
   downvotes    Int
 }
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+
+  //userId of user who made this comment
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id]) 
+  
+  // blogPostId of blogpost this comment was made on
+  blogPostId Int
+  blogPost  BlogPost @relation(fields: [blogPostId], references: [id])
+  
+  upvotes int 
+  downvotes int
+  reports      InappropriateContentReport[] //reports made about this comment
+}
+
