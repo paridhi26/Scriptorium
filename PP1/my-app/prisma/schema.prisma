@@ -14,25 +14,20 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())  //different id for each user(primary key)
+  id        Int       @id @default(autoincrement())  //different id for each user(primary key), auto-increments
   email     String    @unique //email-needs to be different for all users
   password  String    //password
-  firstName String
-  lastName  String
+  firstName String   //users firstname
+  lastName  String   users lastname
   avatar    String?  //optional
   phone     String?  //optional
   role Role @default(USER) //roll (if they have admin privileges or not)
   createdAt DateTime  @default(now())  //time it is created
   updatedAt DateTime  @updatedAt  //time it is updated
   codeTemplates CodeTemplate[]  //code templates
-  blogPosts    BlogPost[]
-  comments     Comment[]
-  reports      InappropriateContentReport[]
-}
-
-enum Role { 
-  USER 
-  ADMIN 
+  blogPosts    BlogPost[]  //users previous blog posts
+  comments     Comment[]  //users previous comments
+  reports      InappropriateContentReport[] //reports of users previous blog post or comments
 }
 
 model CodeTemplate {
@@ -120,5 +115,9 @@ model Session {
   expiresAt DateTime // Timestamp indicating when the session will expire
 }
 
+enum Role { 
+  USER //the role user
+  ADMIN //the role admin
+}
 
 
