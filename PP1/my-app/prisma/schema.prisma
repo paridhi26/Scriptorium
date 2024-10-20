@@ -93,3 +93,15 @@ model Comment {
   reports      InappropriateContentReport[] //reports made about this comment
 }
 
+model InappropriateContentReport {
+  id        Int      @id @default(autoincrement()) //Primary key 
+  reason    String   //reason for reporting
+  createdAt DateTime @default(now())  //report created date
+  user      User     @relation(fields: [userId], references: [id]) //user that reported
+  userId    Int //Foreign key pointing to the User who submitted the report
+  blogPost  BlogPost? @relation(fields: [blogPostId], references: [id]) //optional - was it a blogpost that is being reported
+  blogPostId Int? //foreign key to the blog post
+  comment   Comment?  @relation(fields: [commentId], references: [id]) //optional-was it a comment being reported
+  commentId Int? //foreign key for comment
+}
+
