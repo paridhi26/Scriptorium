@@ -33,14 +33,14 @@ export default async function login(req, res) {
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
-        // Generate a JWT token
+        // Generate a JWT token (chatGPT)
         const token = jwt.sign(
             { userId: user.id, email: user.email },
             SECRET_KEY,
             { expiresIn: '1h' }  // Token expiration time
         );
 
-        // Respond with the token
+        // return the token
         res.status(200).json({ token });
 
     } catch (error) {
