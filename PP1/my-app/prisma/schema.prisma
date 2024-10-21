@@ -13,6 +13,7 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+
 model User {
   id        Int       @id @default(autoincrement())  //different id for each user(primary key), auto-increments
   email     String    @unique //email-needs to be different for all users
