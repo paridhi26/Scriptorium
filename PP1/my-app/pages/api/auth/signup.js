@@ -17,6 +17,7 @@ export default async function signUp(req, res) {
     try {
         const passwordHash = await bcrypt.hash(password, 10); // chatGPT 
 
+        // avatar would be an image URL
         const user = await prisma.user.create({
             data: {
               email,
