@@ -1,30 +1,38 @@
 import prisma from '../../../lib/prisma';
-import { getSession } from 'next-auth/react';
+import jwt from 'jsonwebtoken';
+
+// used chatGPT to replace previous authentication logic with new one
+
+const SECRET_KEY = process.env.JWT_SECRET;
 
 export default async function saveTemplate(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
-    const session = await getSession({ req });
-
-    // Ensure user is authenticated
-    if (!session) {
+    // Get the JWT token from the Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const { title, description, code, languageId, tags } = req.body;
-
-    // Validate required fields
-    if (!title || !description || !code || !languageId) {
-        console.log('Missing fields:', { title, description, code, languageId });
-        return res.status(400).json({ message: 'Missing required fields.' });
-    }
+    const token = authHeader.split(' ')[1];
 
     try {
-        // Get the authenticated user from the session
+        // Verify the token
+        const decoded = jwt.verify(token, SECRET_KEY);
+        const userId = decoded.userId;
+
+        // Validate required fields
+        const { title, description, code, languageId, tags } = req.body;
+        if (!title || !description || !code || !languageId) {
+            console.log('Missing fields:', { title, description, code, languageId });
+            return res.status(400).json({ message: 'Missing required fields.' });
+        }
+
+        // Fetch the authenticated user from the database
         const user = await prisma.user.findUnique({
-            where: { email: session.user.email },
+            where: { id: userId },
         });
 
         if (!user) {
@@ -54,6 +62,9 @@ export default async function saveTemplate(req, res) {
         res.status(201).json(newTemplate);
 
     } catch (error) {
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(403).json({ message: 'Invalid or expired token' });
+        }
         console.error('Error saving template:', error);
         res.status(500).json({ error: 'An error occurred while saving the template.' });
     }

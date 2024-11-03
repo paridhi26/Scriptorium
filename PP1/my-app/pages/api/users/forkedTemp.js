@@ -1,9 +1,25 @@
-import { getSession } from 'next-auth/react';
 import prisma from '../../../../lib/prisma';
+import jwt from 'jsonwebtoken';
+
+// used chatGPT to replace previous authentication logic with new one
+
+const SECRET_KEY = process.env.JWT_SECRET;
 
 export default async function handler(req, res) {
     const { id } = req.query;
-    const session = await getSession({ req });
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(' ')[1];
+
+    // Check token and authenticate user
+    let userId;
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, SECRET_KEY);
+            userId = decoded.userId;
+        } catch (error) {
+            return res.status(403).json({ message: 'Invalid or expired token' });
+        }
+    }
 
     if (req.method === 'GET') {
         // Viewing an existing template for modification (available to all visitors)
@@ -27,11 +43,11 @@ export default async function handler(req, res) {
 
     } else if (req.method === 'POST') {
         // Forking an existing template (only authenticated users can fork and save)
-        const { title, description, code, tags } = req.body;
-
-        if (!session) {
+        if (!userId) {
             return res.status(401).json({ message: 'Unauthorized. You must be logged in to fork and save a template.' });
         }
+
+        const { title, description, code, tags } = req.body;
 
         // Validate the input
         if (!title || !description || !code) {
@@ -55,7 +71,7 @@ export default async function handler(req, res) {
                     description: `${description} (Forked from template ID: ${originalTemplate.id})`,  // Add fork notification
                     code,
                     user: {
-                        connect: { email: session.user.email },  // Link to the authenticated user
+                        connect: { id: userId },  // Link to the authenticated user
                     },
                     language: {
                         connect: { id: originalTemplate.langId },  // Use the same programming language

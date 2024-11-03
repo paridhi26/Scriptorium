@@ -22,26 +22,34 @@ export default function logout(req, res) {
 
 // Middleware to check if user is authenticated
 // import this function to check if user is authenticated when needed
+// fixed with chatGPT
 export const isAuthenticated = (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1];
-
-    // if token does not exist
-    if (!token) {
+    // Ensure the authorization header is present
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // if token is blacklisted
+    // Extract token from the "Bearer <token>" format
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized: Token missing' });
+    }
+
+    // Check if the token is blacklisted
     if (blacklist.includes(token)) {
         return res.status(401).json({ message: 'Token has been invalidated' });
     }
 
-    // verify if token is valid
-    jwt.verify(token, SECRET_KEY, (err, user) => {
+    // Verify the token
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if (err) {
+            console.error('JWT Error:', err);
             return res.status(403).json({ message: 'Invalid or expired token' });
         }
 
-        req.user = user;
+        // Attach decoded user information to the request object
+        req.user = { id: decoded.userId, email: decoded.email };
         next();
     });
-}
+};
