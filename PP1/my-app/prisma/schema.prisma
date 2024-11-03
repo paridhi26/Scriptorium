@@ -13,109 +13,120 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-
 model User {
-  id        Int       @id @default(autoincrement())  // different id for each user (primary key), auto-increments
-  email     String    @unique                       // email - needs to be unique for all users
-  password  String                                 // password
-  firstName String                                 // user's first name
-  lastName  String                                 // user's last name
-  avatar    String?                                // optional
-  phone     String?                                // optional
-  role      String    @default("USER")              // role (admin or user) stored as a string
-  createdAt DateTime  @default(now())               // time it is created
-  updatedAt DateTime  @updatedAt                    // time it is updated
-  codeTemplates CodeTemplate[]                     // code templates created by the user
-  blogPosts    BlogPost[]                          // user's previous blog posts
-  comments     Comment[]                           // user's previous comments
-  reports      InappropriateContentReport[]        // reports of user's blog post or comments
-  sessions     Session[]                           // sessions for user
+  id             Int        @id @default(autoincrement())
+  email          String     @unique
+  password       String
+  firstName      String
+  lastName       String
+  avatar         String?
+  phone          String?
+  role           String     @default("USER")
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  codeTemplates  CodeTemplate[]
+  blogPosts      BlogPost[]
+  comments       Comment[]
+  reports        InappropriateContentReport[]
+  sessions       Session[]
+  votes          Vote[]
 }
 
 model CodeTemplate {
-  id          Int        @id @default(autoincrement())   // primary key
-  title       String
-  description String                                    // explanation of the code in this template
-  code        String                                    // actual code
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  langId      Int                                         // the programming language this code template uses.
-  language    ProgrammingLanguage @relation(fields: [langId], references: [id])
-  userId      Int                                         // the user who created this code template.
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags        CodeTemplateTag[]                          // tags related to this code template
-  blogPosts   BlogPost[] @relation("BlogTemplates")       // many-to-many relationship between BlogPosts and CodeTemplates
+  id             Int                @id @default(autoincrement())
+  title          String
+  description    String
+  code           String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  langId         Int
+  language       ProgrammingLanguage @relation(fields: [langId], references: [id])
+  userId         Int
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags           CodeTemplateTag[]
+  blogPosts      BlogPost[]         @relation("BlogTemplates")
 }
 
 model CodeTemplateTag {
-  id             Int            @id @default(autoincrement())   // primary key for the tag model
-  tag            String                                        // actual tag
+  id             Int                @id @default(autoincrement())
+  tag            String
   codeTemplateId Int
-  codeTemplate   CodeTemplate @relation(fields: [codeTemplateId], references: [id], onDelete: Cascade)
+  codeTemplate   CodeTemplate       @relation(fields: [codeTemplateId], references: [id], onDelete: Cascade)
 }
 
 model BlogPost {
-  id          Int       @id @default(autoincrement())          // primary key
-  title       String
-  description String
-  content     String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  userId      Int                                         // userId of the user who created this blog post
-  user        User      @relation(fields: [userId], references: [id])
-  tags        BlogPostTag[]                               // tags related to this blog post
-  codeTemplates CodeTemplate[] @relation("BlogTemplates") // many-to-many relationship between BlogPosts and CodeTemplates
-  comments    Comment[]                                   // comments made on this blog post
-  reports     InappropriateContentReport[]                // reports made about this blog post
-  upvotes     Int                                         // upvotes count
-  downvotes   Int                                         // downvotes count
+  id             Int                @id @default(autoincrement())
+  title          String
+  description    String
+  content        String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  userId         Int
+  user           User               @relation(fields: [userId], references: [id])
+  tags           BlogPostTag[]
+  codeTemplates  CodeTemplate[]     @relation("BlogTemplates")
+  comments       Comment[]
+  reports        InappropriateContentReport[]
+  votes          Vote[]
 }
 
 model BlogPostTag {
-  id         Int       @id @default(autoincrement())   // primary key for the tag model
-  tag        String                                  // actual tag
-  blogPostId Int
-  blogPost   BlogPost  @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+  id             Int                @id @default(autoincrement())
+  tag            String
+  blogPostId     Int
+  blogPost       BlogPost           @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())   // primary key
-  content   String                                 // content of the comment
-  createdAt DateTime @default(now())                // comment creation time
-  userId    Int                                    // userId of the user who made this comment
-  user      User     @relation(fields: [userId], references: [id]) 
-  blogPostId Int                                  // blogPostId of the blog post this comment was made on
-  blogPost  BlogPost @relation(fields: [blogPostId], references: [id])
-  upvotes   Int                                    // upvotes count
-  downvotes Int                                    // downvotes count
-  reports   InappropriateContentReport[]           // reports made about this comment
+  id             Int                @id @default(autoincrement())
+  content        String
+  createdAt      DateTime           @default(now())
+  userId         Int
+  user           User               @relation(fields: [userId], references: [id]) 
+  blogPostId     Int
+  blogPost       BlogPost           @relation(fields: [blogPostId], references: [id])
+  reports        InappropriateContentReport[]
+  votes          Vote[]
 }
 
 model InappropriateContentReport {
-  id        Int      @id @default(autoincrement())  // primary key
-  reason    String                                 // reason for reporting
-  createdAt DateTime @default(now())                // report created date
-  userId    Int                                    // user who submitted the report
-  user      User     @relation(fields: [userId], references: [id])
-  blogPostId Int?                                  // optional - was it a blog post that is being reported
-  blogPost  BlogPost? @relation(fields: [blogPostId], references: [id])
-  commentId Int?                                   // optional - was it a comment being reported
-  comment   Comment?  @relation(fields: [commentId], references: [id])
+  id             Int                @id @default(autoincrement())
+  reason         String
+  createdAt      DateTime           @default(now())
+  userId         Int
+  user           User               @relation(fields: [userId], references: [id])
+  blogPostId     Int?
+  blogPost       BlogPost?          @relation(fields: [blogPostId], references: [id])
+  commentId      Int?
+  comment        Comment?           @relation(fields: [commentId], references: [id])
 }
 
 model ProgrammingLanguage {
-  id           Int          @id @default(autoincrement())  // primary key
-  name         String       @unique                        // name of the programming language
-  codeTemplates CodeTemplate[]                            // one-to-many relationship with CodeTemplate
+  id             Int                @id @default(autoincrement())
+  name           String             @unique
+  codeTemplates  CodeTemplate[]
 }
 
 model Session {
-  id        Int      @id @default(autoincrement())        // primary key
-  token     String                                       // unique session token to authenticate the user during the session
-  user      User     @relation(fields: [userId], references: [id]) // relationship to the User model
-  userId    Int                                         // foreign key referencing the User model (who the session belongs to)
-  createdAt DateTime @default(now())                     // timestamp indicating when the session was created
-  expiresAt DateTime                                     // timestamp indicating when the session will expire
+  id             Int                @id @default(autoincrement())
+  token          String
+  user           User               @relation(fields: [userId], references: [id])
+  userId         Int
+  createdAt      DateTime           @default(now())
+  expiresAt      DateTime
 }
+
+model Vote {
+  id             Int                @id @default(autoincrement())
+  value          Int                // +1 for upvote, -1 for downvote
+  user           User               @relation(fields: [userId], references: [id])
+  userId         Int
+  blogPost       BlogPost?          @relation(fields: [blogPostId], references: [id])
+  blogPostId     Int?
+  comment        Comment?           @relation(fields: [commentId], references: [id])
+  commentId      Int?
+  createdAt      DateTime           @default(now())
+}
+
 
 
