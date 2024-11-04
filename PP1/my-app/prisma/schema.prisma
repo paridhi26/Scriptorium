@@ -70,6 +70,7 @@ model BlogPost {
   comments       Comment[]
   reports        InappropriateContentReport[]
   votes          Vote[]
+  hidden         Boolean            @default(false)
 }
 
 model BlogPostTag {
@@ -92,6 +93,7 @@ model Comment {
   replies          Comment[]          @relation("CommentReplies") 
   reports          InappropriateContentReport[]
   votes            Vote[]
+  hidden           Boolean            @default(false)
 }
 
 
