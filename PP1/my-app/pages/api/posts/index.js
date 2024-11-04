@@ -1,6 +1,8 @@
 import { isAuthenticated } from '../auth/logout';
 import prisma from '../../../lib/prisma';
 
+// chatGPT
+
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     return isAuthenticated(req, res, async () => {

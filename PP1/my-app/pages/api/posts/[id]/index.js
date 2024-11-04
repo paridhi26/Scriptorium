@@ -1,5 +1,7 @@
-import prisma from '../../../../lib/prisma';
-import { isAuthenticated } from '../../auth/logout';
+import prisma from '@lib/prisma';
+import { isAuthenticated } from '@auth/logout';
+
+// chatGPT
 
 export default async function handler(req, res) {
   const postId = parseInt(req.query.id);

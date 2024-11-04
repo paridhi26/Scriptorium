@@ -4,6 +4,8 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// original made manually, chatGPT edited and reformated
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -78,16 +80,20 @@ model BlogPostTag {
 }
 
 model Comment {
-  id             Int                @id @default(autoincrement())
-  content        String
-  createdAt      DateTime           @default(now())
-  userId         Int
-  user           User               @relation(fields: [userId], references: [id]) 
-  blogPostId     Int
-  blogPost       BlogPost           @relation(fields: [blogPostId], references: [id])
-  reports        InappropriateContentReport[]
-  votes          Vote[]
+  id               Int                @id @default(autoincrement())
+  content          String
+  createdAt        DateTime           @default(now())
+  userId           Int
+  user             User               @relation(fields: [userId], references: [id]) 
+  blogPostId       Int?
+  blogPost         BlogPost?          @relation(fields: [blogPostId], references: [id])
+  parentCommentId  Int?               
+  parentComment    Comment?           @relation("CommentReplies", fields: [parentCommentId], references: [id])
+  replies          Comment[]          @relation("CommentReplies") 
+  reports          InappropriateContentReport[]
+  votes            Vote[]
 }
+
 
 model InappropriateContentReport {
   id             Int                @id @default(autoincrement())
