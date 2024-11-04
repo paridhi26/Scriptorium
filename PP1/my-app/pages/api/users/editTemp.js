@@ -1,19 +1,34 @@
-import { getSession } from 'next-auth/react';
 import prisma from '../../../lib/prisma';
+import jwt from 'jsonwebtoken';
+
+// used chatGPT to replace previous authentication logic with new one
+
+const SECRET_KEY = process.env.JWT_SECRET;
 
 export default async function handler(req, res) {
-    const session = await getSession({ req });
-
-    if (!session) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
-
     const { id } = req.query;  // Template ID from the URL
     const { title, description, code, tags } = req.body;
 
     // Only allow PUT and DELETE methods for this endpoint
     if (req.method !== 'PUT' && req.method !== 'DELETE') {
         return res.status(405).json({ message: 'Method not allowed' });
+    }
+
+    // Get the JWT token from the Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    let userId;
+
+    try {
+        // Verify the token and retrieve user ID from it
+        const decoded = jwt.verify(token, SECRET_KEY);
+        userId = decoded.userId;
+    } catch (error) {
+        return res.status(403).json({ message: 'Invalid or expired token' });
     }
 
     try {
@@ -28,7 +43,7 @@ export default async function handler(req, res) {
         }
 
         // Ensure the user owns the template
-        if (template.user.email !== session.user.email) {
+        if (template.user.id !== userId) {
             return res.status(403).json({ message: 'You do not have permission to edit or delete this template.' });
         }
 

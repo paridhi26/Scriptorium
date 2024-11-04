@@ -17,12 +17,12 @@ export default async function handler(req, res) {
         const templates = await prisma.codeTemplate.findMany({
             where: {
                 OR: [
-                    { title: { contains: query, mode: 'insensitive' } },  // Search by title
-                    { description: { contains: query, mode: 'insensitive' } },  // Search by description
-                    { code: { contains: query, mode: 'insensitive' } },  // Search by code content
+                    { title: { contains: query } },  // Search by title
+                    { description: { contains: query } },  // Search by description
+                    { code: { contains: query } },  // Search by code content
                     {
                         tags: {
-                            some: { tag: { contains: query, mode: 'insensitive' } },  // Search by tags
+                            some: { tag: { contains: query } },  // Search by tags
                         },
                     },
                 ],
