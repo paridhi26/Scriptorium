@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import prisma from '../../../lib/prisma';
+import prisma from '@/lib/prisma';
 
 export default async function signUp(req, res) {
     if (req.method !== 'POST') {
