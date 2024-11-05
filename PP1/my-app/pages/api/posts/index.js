@@ -1,9 +1,8 @@
 import prisma from '@lib/prisma';
 import { isAuthenticated } from '@auth/logout';
 
-// chatGPT
-
 export default async function handler(req, res) {
+  // Handle creating a new post
   if (req.method === 'POST') {
     return isAuthenticated(req, res, async () => {
       const { title, description, content, tags = [], codeTemplateIds = [] } = req.body;
@@ -52,8 +51,33 @@ export default async function handler(req, res) {
         res.status(500).json({ message: 'Failed to create post', error: error.message });
       }
     });
-  } else {
-    res.setHeader('Allow', ['POST']);
+  }
+  
+  // Handle fetching all posts for the authenticated user
+  else if (req.method === 'GET') {
+    return isAuthenticated(req, res, async () => {
+      const authorId = req.user.id;
+
+      try {
+        const posts = await prisma.blogPost.findMany({
+          where: { userId: authorId },
+          include: {
+            tags: true,
+            codeTemplates: true,
+          },
+        });
+
+        res.status(200).json(posts);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        res.status(500).json({ message: 'Failed to fetch posts', error: error.message });
+      }
+    });
+  }
+  
+  // Method not allowed
+  else {
+    res.setHeader('Allow', ['POST', 'GET']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

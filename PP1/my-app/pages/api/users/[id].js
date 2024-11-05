@@ -1,4 +1,6 @@
 import prisma from '@lib/prisma';
+import { isAuthenticated } from '@auth/logout';
+import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
     const { id } = req.query; // user id from the query params
@@ -25,53 +27,63 @@ export default async function handler(req, res) {
 
     // PUT request (update user by id)
     else if (req.method === 'PUT') {
-        const { email, password, firstName, lastName, avatar, phone } = req.body;
-        try {
-            // Prepare data for update, password is handled separately
-            let updateData = {
-                ...(email && { email }),            
-                ...(firstName && { firstName }),    
-                ...(lastName && { lastName }),      
-                ...(avatar && { avatar }),         
-                ...(phone && { phone }),           
-            };
+        return isAuthenticated(req, res, async () => {
+            const { email, password, firstName, lastName, avatar, phone } = req.body;
+            const userId = req.user.id;
 
-            // If password needs to be updated, we hash it first and add it to the update object
-            if (password) {
-                const hashedPassword = await bcrypt.hash(password, 10); 
-                updateData.password = hashedPassword;
+            // Check if authenticated user is updating their own profile
+            if (userId !== parseInt(id)) {
+                return res.status(403).json({ message: 'Unauthorized to update this user.' });
             }
 
-            // update user in the database
-            const updatedUser = await prisma.user.update({
-                where: { id: parseInt(id) },
-                data: updateData,
-            });
+            try {
+                let updateData = {
+                    ...(email && { email }),
+                    ...(firstName && { firstName }),
+                    ...(lastName && { lastName }),
+                    ...(avatar && { avatar }),
+                    ...(phone && { phone }),
+                };
 
-            res.status(200).json(updatedUser);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'An error occurred while updating the user' });
-        }
+                if (password) {
+                    const hashedPassword = await bcrypt.hash(password, 10);
+                    updateData.password = hashedPassword;
+                }
+
+                const updatedUser = await prisma.user.update({
+                    where: { id: parseInt(id) },
+                    data: updateData,
+                });
+
+                res.status(200).json(updatedUser);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'An error occurred while updating the user' });
+            }
+        });
     }
 
     // DELETE request (delete user by id)
     else if (req.method === 'DELETE') {
-        try {
-            // delete user from the database
-            const deletedUser = await prisma.user.delete({
-                where: { id: parseInt(id) },
-            });
+        return isAuthenticated(req, res, async () => {
+            const userId = req.user.id;
 
-            res.status(200).json(deletedUser);
+            // Check if authenticated user is deleting their own profile
+            if (userId !== parseInt(id)) {
+                return res.status(403).json({ message: 'Unauthorized to delete this user.' });
+            }
 
-        } catch (error) {
-            res.status(500).json({ error: 'An error occurred while deleting the user.' });
-        }
-    } 
+            try {
+                const deletedUser = await prisma.user.delete({
+                    where: { id: parseInt(id) },
+                });
 
-    else {
+                res.status(200).json({ message: 'User deleted successfully.', user: deletedUser });
+            } catch (error) {
+                res.status(500).json({ error: 'An error occurred while deleting the user.' });
+            }
+        });
+    } else {
         res.status(405).json({ message: 'Method not allowed.' });
     }
- 
 } 

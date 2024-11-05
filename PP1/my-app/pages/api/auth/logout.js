@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import prisma from '@lib/prisma';
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
@@ -23,7 +24,7 @@ export default function logout(req, res) {
 // Middleware to check if user is authenticated
 // import this function to check if user is authenticated when needed
 // fixed with chatGPT
-export const isAuthenticated = (req, res, next) => {
+export const isAuthenticated = async (req, res, next, requireAdmin = false) => {
     // Ensure the authorization header is present
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -41,15 +42,25 @@ export const isAuthenticated = (req, res, next) => {
         return res.status(401).json({ message: 'Token has been invalidated' });
     }
 
-    // Verify the token
-    jwt.verify(token, SECRET_KEY, (err, decoded) => {
-        if (err) {
-            console.error('JWT Error:', err);
-            return res.status(403).json({ message: 'Invalid or expired token' });
+    try {
+        // Verify the token
+        const decoded = jwt.verify(token, SECRET_KEY);
+        req.user = { id: decoded.userId, email: decoded.email };
+
+        // If requireAdmin is true, check for the admin role
+        if (requireAdmin) {
+            const user = await prisma.user.findUnique({
+                where: { id: req.user.id },
+            });
+            if (!user || user.role !== 'ADMIN') {
+                return res.status(403).json({ message: 'Forbidden: Admin access required' });
+            }
         }
 
-        // Attach decoded user information to the request object
-        req.user = { id: decoded.userId, email: decoded.email };
-        next();
-    });
+        // Call next middleware or handler
+        return next();
+    } catch (err) {
+        console.error('JWT Error:', err);
+        return res.status(403).json({ message: 'Invalid or expired token' });
+    }
 };

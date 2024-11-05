@@ -9,7 +9,7 @@ export default function testAuth(req, res) {
     }
 
     // Check if user is authenticated
-    isAuthenticated(req, res, () => {
-        res.status(200).json({ message: 'User is authenticated' });
+    return isAuthenticated(req, res, async () => {
+        res.status(200).json({ message: 'Authenticated!' });
     });
 }
