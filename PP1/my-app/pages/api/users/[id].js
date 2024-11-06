@@ -28,6 +28,14 @@ export default async function handler(req, res) {
         try {
             const user = await prisma.user.findUnique({
                 where: { id: parseInt(id) },
+                select: {
+                    email: true,
+                    firstName: true,
+                    lastName: true,
+                    avatar: true,
+                    phone: true,
+                    // Exclude password field
+                },
             });
 
             if (!user) {
@@ -69,9 +77,22 @@ export default async function handler(req, res) {
                         updateData.avatar = `/avatars/${req.file.filename}`;
                     }
 
-                    const updatedUser = await prisma.user.update({
+                    await prisma.user.update({
                         where: { id: parseInt(id) },
                         data: updateData,
+                    });
+
+                    // Fetch the updated user without the password field
+                    const updatedUser = await prisma.user.findUnique({
+                        where: { id: parseInt(id) },
+                        select: {
+                            email: true,
+                            firstName: true,
+                            lastName: true,
+                            avatar: true,
+                            phone: true,
+                            // Exclude password field
+                        },
                     });
 
                     res.status(200).json(updatedUser);
@@ -90,7 +111,6 @@ export default async function handler(req, res) {
             }
 
             try {
-                // Retrieve the user's avatar path to delete the file after deletion
                 const user = await prisma.user.findUnique({
                     where: { id: parseInt(id) },
                     select: { avatar: true },
@@ -98,9 +118,15 @@ export default async function handler(req, res) {
 
                 const deletedUser = await prisma.user.delete({
                     where: { id: parseInt(id) },
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        avatar: true,
+                    },
                 });
 
-                // Delete avatar file if it exists
                 if (user.avatar) {
                     const avatarPath = path.join(process.cwd(), 'public', user.avatar);
                     fs.unlink(avatarPath, (err) => {
@@ -122,7 +148,6 @@ export default async function handler(req, res) {
     }
 }
 
-// Disable default Next.js body parser to use Multer
 export const config = {
     api: {
         bodyParser: false,

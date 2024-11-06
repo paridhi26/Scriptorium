@@ -11,7 +11,7 @@ export default async function handler(req, res) {
         // Fetch the code template by ID
         const template = await prisma.codeTemplate.findUnique({
             where: { id: parseInt(id) },
-            include: { tags: true, user: true }, // Include tags and user who created the template
+            include: { tags: true, user: false }, // Include tags and user who created the template
         });
 
         if (!template) {

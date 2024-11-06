@@ -13,7 +13,8 @@ export default async function handler(req, res) {
             where: { id: parseInt(id) },
             include: {
                 tags: true,
-                blogPosts: { // Fetch associated blog posts that reference this template
+                blogPosts: {
+                    where: { hidden: false }, // Only include blog posts that are not hidden
                     include: {
                         tags: true,
                         user: {
@@ -32,7 +33,7 @@ export default async function handler(req, res) {
             return res.status(404).json({ message: 'Template not found.' });
         }
 
-        // Return the template with associated blog posts
+        // Return the template with associated blog posts that are not hidden
         return res.status(200).json(template);
 
     } catch (error) {
