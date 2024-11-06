@@ -8,10 +8,14 @@ echo "Starting environment setup..."
 # Step 1: Change to the my-app directory
 cd my-app
 
-# Step 2: Install npm packages
-echo "Installing npm packages..."
-npm install
-echo "npm packages installed."
+# Step 2: Create or overwrite the .env.local file
+echo "Setting up environment variables..."
+cat <<EOL > .env.local
+# JWT secret key
+JWT_SECRET=63E8AE121217B47A2E75BBD38CFBF
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+EOL
+echo ".env.local file created with environment variables."
 
 # Step 3: Run database migrations
 echo "Running database migrations..."
