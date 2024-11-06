@@ -8,20 +8,21 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Fetch the blog post by ID, including associated code templates
+        // Fetch the blog post by ID, including associated tags and code templates
         const blogPost = await prisma.blogPost.findUnique({
             where: { id: parseInt(id) },
             include: {
                 tags: true,
-                codeTemplates: true, // Include associated code templates
+                codeTemplates: true,
             },
         });
 
-        if (!blogPost) {
+        // If no blog post is found or if it is hidden, return a 404 error
+        if (!blogPost || blogPost.hidden) {
             return res.status(404).json({ message: 'Blog post not found.' });
         }
 
-        // Return the blog post with associated code templates
+        // Return the blog post with associated tags and code templates if it is not hidden
         return res.status(200).json(blogPost);
 
     } catch (error) {
