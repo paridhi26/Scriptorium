@@ -278,7 +278,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"My First Blog Post\",\r\n  \"description\": \"An introduction to my blog post.\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": [3, 4]\r\n}",
+					"raw": "{\r\n  \"title\": \"My First Blog Post COPY\",\r\n  \"description\": \"An introduction to my blog post.\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": []\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -340,7 +340,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:3000/api/posts/5",
+					"raw": "http://localhost:3000/api/posts/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -349,7 +349,7 @@
 					"path": [
 						"api",
 						"posts",
-						"5"
+						"1"
 					]
 				}
 			},
@@ -368,7 +368,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"My First Blog Post\",\r\n  \"description\": \"An introduction to my blog post. (EDIT2)\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": [3, 4]\r\n}",
+					"raw": "{\r\n  \"title\": \"My First Blog Post\",\r\n  \"description\": \"An introduction to my blog post. (EDIT2)\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": [1]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -376,7 +376,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/posts/4",
+					"raw": "http://localhost:3000/api/posts/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -385,7 +385,7 @@
 					"path": [
 						"api",
 						"posts",
-						"4"
+						"1"
 					]
 				}
 			},
@@ -403,7 +403,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:3000/api/posts/5",
+					"raw": "http://localhost:3000/api/posts/2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -412,7 +412,7 @@
 					"path": [
 						"api",
 						"posts",
-						"5"
+						"2"
 					]
 				}
 			},
@@ -520,7 +520,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:3000/api/users/getTemp?id=6",
+					"raw": "http://localhost:3000/api/users/getTemp?id=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -534,7 +534,7 @@
 					"query": [
 						{
 							"key": "id",
-							"value": "6"
+							"value": "1"
 						}
 					]
 				}
@@ -589,7 +589,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:3000/api/users/editTemp?id=6",
+					"raw": "http://localhost:3000/api/users/editTemp?id=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -603,7 +603,7 @@
 					"query": [
 						{
 							"key": "id",
-							"value": "6"
+							"value": "1"
 						}
 					]
 				}
@@ -673,7 +673,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/posts/5/comments",
+					"raw": "http://localhost:3000/api/posts/1/comments",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -682,7 +682,7 @@
 					"path": [
 						"api",
 						"posts",
-						"5",
+						"1",
 						"comments"
 					]
 				}
@@ -767,7 +767,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"value\": 1  // +1 for upvote, -1 for downvote\r\n}",
+					"raw": "{\r\n  \"value\": -1,  // +1 for upvote, -1 for downvote\r\n  \"commentId\": 1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -775,7 +775,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/posts/5/votes",
+					"raw": "http://localhost:3000/api/posts/1/votes",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -784,7 +784,7 @@
 					"path": [
 						"api",
 						"posts",
-						"5",
+						"1",
 						"votes"
 					]
 				}
@@ -923,7 +923,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/visitors/fetchFromLink",
+					"raw": "http://localhost:3000/api/visitors/fetchFromLink?id=5",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -933,6 +933,12 @@
 						"api",
 						"visitors",
 						"fetchFromLink"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5"
+						}
 					]
 				}
 			},
@@ -959,6 +965,108 @@
 						{
 							"key": "id",
 							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mentioned code template",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/mentionedCodeTemplates?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"mentionedCodeTemplates"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search blog post",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/searchBlogPost?query=First",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"searchBlogPost"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "First"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sorted blog posts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/blogPostsSorted",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"blogPostsSorted"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sorted comments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/commentsSorted?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"commentsSorted"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
 						}
 					]
 				}

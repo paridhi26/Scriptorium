@@ -6,12 +6,9 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Fetch blog posts sorted by ratings (e.g., most upvotes first)
+        // Fetch blog posts that are not hidden, including vote counts
         const blogPosts = await prisma.blogPost.findMany({
-            orderBy: [
-                { upvotes: 'desc' },  // Sort by upvotes descending
-                { downvotes: 'asc' }  // Then by downvotes ascending (if upvotes are the same)
-            ],
+            where: { hidden: false },
             include: {
                 tags: true,
                 user: {
@@ -20,13 +17,21 @@ export default async function handler(req, res) {
                         lastName: true,
                         email: true
                     }
-                }
-            }
+                },
+                votes: true, // Include votes for aggregation
+            },
         });
 
-        // Return the sorted blog posts
-        return res.status(200).json(blogPosts);
+        // Sort blog posts based on the number of upvotes and downvotes
+        const sortedBlogPosts = blogPosts
+            .map(post => {
+                const upvotes = post.votes.filter(vote => vote.value === 1).length;
+                const downvotes = post.votes.filter(vote => vote.value === -1).length;
+                return { ...post, upvotes, downvotes };
+            })
+            .sort((a, b) => b.upvotes - a.upvotes || a.downvotes - b.downvotes);
 
+        return res.status(200).json(sortedBlogPosts);
     } catch (error) {
         console.error('Error fetching top-rated blog posts:', error);
         return res.status(500).json({ message: 'An error occurred while fetching blog posts.' });

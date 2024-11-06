@@ -12,10 +12,13 @@ export default async function handler(req, res) {
       const userId = req.user.id;
 
       try {
-        // Fetch the post by ID, including the hidden status and author
+        // Fetch the post by ID, including tags and codeTemplates
         const post = await prisma.blogPost.findUnique({
           where: { id: postId },
-          include: { tags: true },
+          include: { 
+            tags: true,
+            codeTemplates: true,  // Include associated code templates
+          },
         });
 
         if (!post) {
@@ -38,7 +41,7 @@ export default async function handler(req, res) {
   // PUT request (update post by ID)
   if (req.method === 'PUT') {
     return isAuthenticated(req, res, async () => {
-      const { title, description, content, tags } = req.body;
+      const { title, description, content, tags, codeTemplateIds } = req.body;  // Include codeTemplateIds to link
       const userId = req.user.id;
 
       try {
@@ -64,11 +67,17 @@ export default async function handler(req, res) {
             description,
             content,
             tags: {
-              deleteMany: {},
-              create: tags.map(tag => ({ tag })),
+              deleteMany: {},  // Clear existing tags
+              create: tags.map(tag => ({ tag })),  // Add new tags
+            },
+            codeTemplates: {
+              set: codeTemplateIds.map(id => ({ id })),  // Link to new codeTemplates by ID
             },
           },
-          include: { tags: true },
+          include: { 
+            tags: true,
+            codeTemplates: true,
+          },
         });
 
         res.status(200).json(updatedPost);

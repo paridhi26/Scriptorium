@@ -8,13 +8,9 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Fetch comments for a specific blog post, sorted by ratings
+        // Fetch comments for the specific blog post, including votes
         const comments = await prisma.comment.findMany({
             where: { blogPostId: parseInt(id) },
-            orderBy: [
-                { upvotes: 'desc' },  // Sort by upvotes descending
-                { downvotes: 'asc' }  // Then by downvotes ascending
-            ],
             include: {
                 user: {
                     select: {
@@ -22,13 +18,21 @@ export default async function handler(req, res) {
                         lastName: true,
                         email: true
                     }
-                }
+                },
+                votes: true // Include votes for aggregation
             }
         });
 
-        // Return the sorted comments
-        return res.status(200).json(comments);
+        // Sort comments by calculated upvotes and downvotes
+        const sortedComments = comments
+            .map(comment => {
+                const upvotes = comment.votes.filter(vote => vote.value === 1).length;
+                const downvotes = comment.votes.filter(vote => vote.value === -1).length;
+                return { ...comment, upvotes, downvotes };
+            })
+            .sort((a, b) => b.upvotes - a.upvotes || a.downvotes - b.downvotes);
 
+        return res.status(200).json(sortedComments);
     } catch (error) {
         console.error('Error fetching top-rated comments:', error);
         return res.status(500).json({ message: 'An error occurred while fetching comments.' });

@@ -6,25 +6,27 @@ export default async function handler(req, res) {
     }
 
     const { query } = req.query;
+    const searchQuery = query.toLowerCase();
 
     try {
-        // Perform search on the blog posts by title, content, tags, or associated code templates
+        // Perform a search on the blog posts by title, content, tags, or associated code templates
         const blogs = await prisma.blogPost.findMany({
             where: {
+                hidden: false,  // Exclude hidden posts
                 OR: [
-                    { title: { contains: query, mode: 'insensitive' } },  // Search by blog post title
-                    { content: { contains: query, mode: 'insensitive' } },  // Search by blog post content
+                    { title: { contains: searchQuery } },  // Search by blog post title
+                    { content: { contains: searchQuery } },  // Search by blog post content
                     {
                         tags: {
-                            some: { tag: { contains: query, mode: 'insensitive' } },  // Search by tags
+                            some: { tag: { contains: searchQuery } },  // Search by tags
                         },
                     },
                     {
                         codeTemplates: {
                             some: {
                                 OR: [
-                                    { title: { contains: query, mode: 'insensitive' } },  // Search by code template title
-                                    { code: { contains: query, mode: 'insensitive' } },   // Search by code template content
+                                    { title: { contains: searchQuery } },  // Search by code template title
+                                    { code: { contains: searchQuery } },   // Search by code template content
                                 ],
                             },
                         },

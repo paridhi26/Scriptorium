@@ -7,26 +7,35 @@ export default async function handler(req, res) {
     const postId = parseInt(req.query.id);
 
     if (req.method === 'GET') {
-        // Fetch the total votes (upvotes and downvotes) for the given blog post ID
+        // Fetch the total votes for the blog post
         try {
-            const votes = await prisma.vote.groupBy({
+            const postVotes = await prisma.vote.groupBy({
                 by: ['blogPostId'],
-                _sum: {
-                    value: true,
-                },
+                _sum: { value: true },
                 where: { blogPostId: postId },
             });
 
-            const totalVotes = votes.length > 0 ? votes[0]._sum.value : 0;
-            res.status(200).json({ totalVotes });
+            const commentVotes = await prisma.vote.groupBy({
+                by: ['commentId'],
+                _sum: { value: true },
+                where: { blogPostId: postId },
+            });
+
+            const totalPostVotes = postVotes.length > 0 ? postVotes[0]._sum.value : 0;
+            const totalCommentVotes = commentVotes.map(vote => ({
+                commentId: vote.commentId,
+                totalVotes: vote._sum.value,
+            }));
+
+            res.status(200).json({ totalPostVotes, totalCommentVotes });
         } catch (error) {
             console.error('Error fetching votes:', error);
             res.status(500).json({ message: 'An error occurred while fetching votes.' });
         }
     } else if (req.method === 'POST') {
-        // Add or update a vote for the blog post
+        // Add or update a vote for a blog post or comment
         return isAuthenticated(req, res, async () => {
-            const { value } = req.body; // +1 for upvote, -1 for downvote
+            const { value, commentId } = req.body; // `commentId` is optional for post votes
             const userId = req.user.id;
 
             if (![1, -1].includes(value)) {
@@ -34,27 +43,43 @@ export default async function handler(req, res) {
             }
 
             try {
-                // Check if the user has already voted on this post
-                const existingVote = await prisma.vote.findFirst({
-                    where: { blogPostId: postId, userId },
-                });
-
                 let vote;
-                if (existingVote) {
-                    // Update the existing vote
-                    vote = await prisma.vote.update({
-                        where: { id: existingVote.id },
-                        data: { value },
+                if (commentId) {
+                    // Vote on a comment
+                    const existingVote = await prisma.vote.findFirst({
+                        where: { commentId, userId },
                     });
+
+                    if (existingVote) {
+                        // Update the existing vote
+                        vote = await prisma.vote.update({
+                            where: { id: existingVote.id },
+                            data: { value },
+                        });
+                    } else {
+                        // Create a new vote for the comment
+                        vote = await prisma.vote.create({
+                            data: { value, userId, commentId },
+                        });
+                    }
                 } else {
-                    // Create a new vote
-                    vote = await prisma.vote.create({
-                        data: {
-                            value,
-                            userId,
-                            blogPostId: postId,
-                        },
+                    // Vote on a blog post
+                    const existingVote = await prisma.vote.findFirst({
+                        where: { blogPostId: postId, userId },
                     });
+
+                    if (existingVote) {
+                        // Update the existing vote
+                        vote = await prisma.vote.update({
+                            where: { id: existingVote.id },
+                            data: { value },
+                        });
+                    } else {
+                        // Create a new vote for the post
+                        vote = await prisma.vote.create({
+                            data: { value, userId, blogPostId: postId },
+                        });
+                    }
                 }
 
                 res.status(201).json({ message: 'Vote registered successfully', vote });
