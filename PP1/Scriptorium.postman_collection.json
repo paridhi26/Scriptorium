@@ -1,0 +1,1027 @@
+{
+	"info": {
+		"_postman_id": "74ec8c34-ee19-4149-9ab0-db6114fbbf97",
+		"name": "Scriptorium",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39150889",
+		"_collection_link": "https://crimson-rocket-267541.postman.co/workspace/New-Team-Workspace~749f83b2-e0a3-45bf-9c11-02f5469e556f/collection/39150889-74ec8c34-ee19-4149-9ab0-db6114fbbf97?action=share&source=collection_link&creator=39150889"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {  // Ensure it only runs on successful login\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.environment.set(\"token\", jsonData.token);  // Save token to environment\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"test@scriptorium.com\",\r\n    \"password\": \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login (admin)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {  // Ensure it only runs on successful login\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.environment.set(\"token\", jsonData.token);  // Save token to environment\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@scriptorium.com\",\r\n    \"password\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"test@scriptorium.com\",\r\n    \"password\": \"password123\",\r\n    \"firstName\": \"Test\",\r\n    \"lastName\": \"User\",\r\n    \"avatar\": \"funnyCatAvatar.png\",\r\n    \"phone\": \"123 456 789\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/auth/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test Authentication",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/auth/testAuth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"testAuth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user by id",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"test@scriptorium.com\",\r\n    \"password\": \"password123\",\r\n    \"firstName\": \"Test\",\r\n    \"lastName\": \"User\",\r\n    \"avatar\": \"funnyCatAvatar.jpg\",\r\n    \"phone\": \"123 456 789\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user by id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/users/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create blog post",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"My First Blog Post\",\r\n  \"description\": \"An introduction to my blog post.\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": [3, 4]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all my blog posts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get blog post by id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit blog post",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"My First Blog Post\",\r\n  \"description\": \"An introduction to my blog post. (EDIT2)\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": [3, 4]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete blog post",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save code template",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Template Test\",\r\n  \"description\": \"Test template.\",\r\n  \"code\": \"print('testing')\",\r\n  \"languageId\": 2,  // Assuming 1 is a valid language ID in your database\r\n  \"tags\": [\"Python\", \"Example\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/saveCodeTemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"saveCodeTemp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get any code template",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users/getAnyTemp?query=Python",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"getAnyTemp"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "Python"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get my code template",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/users/getMyTemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"getMyTemp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get template by id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/users/getTemp?id=6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"getTemp"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fork template",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"templateId\": 5\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/forkTemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"forkTemp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete template",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/users/editTemp?id=6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"editTemp"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit template",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Updated Template Title\",\r\n  \"description\": \"Updated Template Description\",\r\n  \"code\": \"console.log('Updated Code');\",\r\n  \"tags\": [\"newTag1\", \"newTag2\"]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/editTemp?id=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"editTemp"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add new comment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"This is a comment on the blog post.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/5/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"5",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reply to comment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"This is a reply to an existing comment.\",\r\n  \"parentCommentId\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/5/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"5",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch comments on post",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/3/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"3",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add or update vote",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"value\": 1  // +1 for upvote, -1 for downvote\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/5/votes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"5",
+						"votes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch total votes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/3/votes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"3",
+						"votes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Report content",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"contentId\": 1,  // The ID of the post or comment you're reporting\r\n    \"contentType\": \"post\",  // \"post\" for a blog post or \"comment\" for a comment\r\n    \"reason\": \"This content is inappropriate and violates guidelines\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reports",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Hide content",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"contentId\": 5,\r\n  \"contentType\": \"post\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reports/hide-content",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reports",
+						"hide-content"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch reported content",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/reports/reported-content",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reports",
+						"reported-content"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get post by link (visitor)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/fetchFromLink",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"fetchFromLink"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get code template (visitor)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/viewFromLink?id=3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"viewFromLink"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Execute code",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"language\": \"Java\",\r\n    \"code\": \"public class Main { public static void main(String[] args) { System.out.println(\\\"Hello from Java\\\"); } }\",\r\n    \"input\": \"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/execute",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"execute"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Execute code template",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"templateId\": 3, // Replace with a valid template ID in your database\r\n  \"input\": \"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/executeTemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"executeTemp"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
