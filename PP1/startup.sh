@@ -34,7 +34,16 @@ echo "Prisma client generated."
 
 # Step 6: Check for required compilers/interpreters
 check_command() {
-    command -v "$1" >/dev/null 2>&1 || { echo >&2 "$1 is required but not installed. Please install it."; exit 1; }
+    command -v "$1" >/dev/null 2>&1 || { 
+        if [[ "$1" == "javac" ]]; then
+            echo "$1 not found, installing default JDK..."
+            sudo apt update
+            sudo apt install default-jdk -y || { echo >&2 "Failed to install JDK. Please install it manually."; exit 1; }
+            echo "JDK installed."
+        else
+            echo >&2 "$1 is required but not installed. Please install it."; exit 1
+        fi
+    }
 }
 
 echo "Checking for required compilers/interpreters..."
@@ -42,6 +51,7 @@ check_command "gcc"
 check_command "g++"
 check_command "python3"
 check_command "java"
+check_command "javac"
 check_command "node"
 echo "All required compilers/interpreters are installed."
 
