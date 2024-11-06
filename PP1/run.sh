@@ -4,5 +4,11 @@
 set -e
 
 echo "Starting the server..."
-npm run dev  # or npm start for production
-echo "Server started."
+
+# Change to the my-app directory
+cd my-app
+
+# Start the server
+npm run dev  # Use 'npm start' if running in production mode
+
+# Note: The server will continue running; this script will keep running
