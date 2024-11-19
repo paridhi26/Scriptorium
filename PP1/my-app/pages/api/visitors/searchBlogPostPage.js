@@ -21,6 +21,7 @@ export default async function handler(req, res) {
 
     const searchQuery = query.toLowerCase();
 
+    
     try {
         // Calculate the offset for pagination
         const skip = (currentPage - 1) * size;
