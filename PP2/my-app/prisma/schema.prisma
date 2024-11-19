@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// original made manually, chatGPT edited and reformated
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id             Int        @id @default(autoincrement())
+  email          String     @unique
+  password       String
+  firstName      String
+  lastName       String
+  avatar         String?
+  phone          String?
+  role           String     @default("USER")
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  codeTemplates  CodeTemplate[]
+  blogPosts      BlogPost[]
+  comments       Comment[]
+  reports        InappropriateContentReport[]
+  sessions       Session[]
+  votes          Vote[]
+}
+
+model CodeTemplate {
+  id             Int                @id @default(autoincrement())
+  title          String
+  description    String
+  code           String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  langId         Int
+  language       ProgrammingLanguage @relation(fields: [langId], references: [id])
+  userId         Int
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags           CodeTemplateTag[]
+  blogPosts      BlogPost[]         @relation("BlogTemplates")
+}
+
+model CodeTemplateTag {
+  id             Int                @id @default(autoincrement())
+  tag            String
+  codeTemplateId Int
+  codeTemplate   CodeTemplate       @relation(fields: [codeTemplateId], references: [id], onDelete: Cascade)
+}
+
+model BlogPost {
+  id             Int                @id @default(autoincrement())
+  title          String
+  description    String
+  content        String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  userId         Int
+  user           User               @relation(fields: [userId], references: [id])
+  tags           BlogPostTag[]
+  codeTemplates  CodeTemplate[]     @relation("BlogTemplates")
+  comments       Comment[]
+  reports        InappropriateContentReport[]
+  votes          Vote[]
+  hidden         Boolean            @default(false)
+}
+
+model BlogPostTag {
+  id             Int                @id @default(autoincrement())
+  tag            String
+  blogPostId     Int
+  blogPost       BlogPost           @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id               Int                @id @default(autoincrement())
+  content          String
+  createdAt        DateTime           @default(now())
+  userId           Int
+  user             User               @relation(fields: [userId], references: [id]) 
+  blogPostId       Int?
+  blogPost         BlogPost?          @relation(fields: [blogPostId], references: [id])
+  parentCommentId  Int?               
+  parentComment    Comment?           @relation("CommentReplies", fields: [parentCommentId], references: [id])
+  replies          Comment[]          @relation("CommentReplies") 
+  reports          InappropriateContentReport[]
+  votes            Vote[]
+  hidden           Boolean            @default(false)
+}
+
+
+model InappropriateContentReport {
+  id             Int                @id @default(autoincrement())
+  reason         String
+  createdAt      DateTime           @default(now())
+  userId         Int
+  user           User               @relation(fields: [userId], references: [id])
+  blogPostId     Int?
+  blogPost       BlogPost?          @relation(fields: [blogPostId], references: [id])
+  commentId      Int?
+  comment        Comment?           @relation(fields: [commentId], references: [id])
+}
+
+model ProgrammingLanguage {
+  id             Int                @id @default(autoincrement())
+  name           String             @unique
+  codeTemplates  CodeTemplate[]
+}
+
+model Session {
+  id             Int                @id @default(autoincrement())
+  token          String
+  user           User               @relation(fields: [userId], references: [id])
+  userId         Int
+  createdAt      DateTime           @default(now())
+  expiresAt      DateTime
+}
+
+model Vote {
+  id             Int                @id @default(autoincrement())
+  value          Int                // +1 for upvote, -1 for downvote
+  user           User               @relation(fields: [userId], references: [id])
+  userId         Int
+  blogPost       BlogPost?          @relation(fields: [blogPostId], references: [id])
+  blogPostId     Int?
+  comment        Comment?           @relation(fields: [commentId], references: [id])
+  commentId      Int?
+  createdAt      DateTime           @default(now())
+}
+
+
+
