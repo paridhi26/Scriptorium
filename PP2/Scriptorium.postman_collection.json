@@ -1,0 +1,3752 @@
+{
+	"info": {
+		"_postman_id": "74ec8c34-ee19-4149-9ab0-db6114fbbf97",
+		"name": "Scriptorium",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39150889",
+		"_collection_link": "https://crimson-rocket-267541.postman.co/workspace/749f83b2-e0a3-45bf-9c11-02f5469e556f/collection/39150889-74ec8c34-ee19-4149-9ab0-db6114fbbf97?action=share&source=collection_link&creator=39150889"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {  // Ensure it only runs on successful login\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.environment.set(\"token\", jsonData.token);  // Save token to environment\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"test@scriptorium.com\",\r\n    \"password\": \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				},
+				"description": "This endpoint logs in with an account, the response would be a valid JWT token."
+			},
+			"response": [
+				{
+					"name": "Login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@scriptorium.com\",\r\n    \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"11pw5qjve0h5h\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "197"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:16:27 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtYWlsIjoidGVzdDRAc2NyaXB0b3JpdW0uY29tIiwiaWF0IjoxNzMwOTI0MTg3LCJleHAiOjE3MzA5Mjc3ODd9.ilij9P_cBAHSHGse9YG7wfHWsQ5d1Z_XxNSBBKqAtLk\"\n}"
+				},
+				{
+					"name": "Login (admin)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@scriptorium.com\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"rd9o78mks55h\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "197"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:54:07 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiYWRtaW5Ac2NyaXB0b3JpdW0uY29tIiwiaWF0IjoxNzMwOTI2NDQ3LCJleHAiOjE3MzA5MzAwNDd9.H_-ABKIuIprcILClhjOgSSOGI6Gv77_KNaDk26mTH0o\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Login (admin)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {  // Ensure it only runs on successful login\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.environment.set(\"token\", jsonData.token);  // Save token to environment\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@scriptorium.com\",\r\n    \"password\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				},
+				"description": "Same as above, this is just the default admin account created with `startup.sh`."
+			},
+			"response": []
+		},
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test5@scriptorium.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password123",
+							"type": "text"
+						},
+						{
+							"key": "firstName",
+							"value": "Test",
+							"type": "text"
+						},
+						{
+							"key": "lastName",
+							"value": "User",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "123 456 789",
+							"type": "text"
+						},
+						{
+							"key": "avatar",
+							"type": "file",
+							"src": "/C:/Users/David/Downloads/images.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				},
+				"description": "This endpoint creates an user account with email, password, first name, last name, phone, and an user uploaded avatar. Only USER accounts can be created in this way, admin accounts are created during `startup.sh` through the `createAdmin.js` script.\n\n_Note: this endpoint uses form-data to allow for uploading avatars_"
+			},
+			"response": [
+				{
+					"name": "Signup",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "test5@scriptorium.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password123",
+									"type": "text"
+								},
+								{
+									"key": "firstName",
+									"value": "Test",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "User",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "123 456 789",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/David/Downloads/images.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"ed3jlubr648m\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "310"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:08:31 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 4,\n    \"email\": \"test5@scriptorium.com\",\n    \"password\": \"$2b$10$X6CmqwFgzCk909m.OC3gJOJIYMMRyHEQVGu5ZdukGEVtyRUIrklj6\",\n    \"firstName\": \"Test\",\n    \"lastName\": \"User\",\n    \"avatar\": \"/avatars/1730923711620-images.jpg\",\n    \"phone\": \"123 456 789\",\n    \"role\": \"USER\",\n    \"createdAt\": \"2024-11-06T20:08:31.674Z\",\n    \"updatedAt\": \"2024-11-06T20:08:31.674Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/auth/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"logout"
+					]
+				},
+				"description": "Logs out of an account by invalidating the JWT token."
+			},
+			"response": [
+				{
+					"name": "Logout",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"mv5c957rck11\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "37"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:54:42 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Logged out successfully\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Test Authentication",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/auth/testAuth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"testAuth"
+					]
+				},
+				"description": "This endpoint is for testing if an account is authenticated (logged in) by checking the JWT token. This endpoint is for ease of testing of, it simply calls the `isAuthenticated` middleware located in `logout.js`. Any endpoint that requires authentication would call `isAuthenticated` too."
+			},
+			"response": [
+				{
+					"name": "Test Authentication",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/auth/testAuth",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"testAuth"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"tlt1wk2fufs\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "28"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:54:58 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Authenticated!\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get user by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"3"
+					]
+				},
+				"description": "Responds with information of a user specified by user id in query."
+			},
+			"response": [
+				{
+					"name": "Get user by id",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/users/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"y3u8br5o4g2q\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "98"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:30:03 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"email\": \"admin@scriptorium.com\",\n    \"firstName\": \"Admin\",\n    \"lastName\": \"User\",\n    \"avatar\": null,\n    \"phone\": null\n}"
+				}
+			]
+		},
+		{
+			"name": "Update user by id",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test5@scriptorium.com",
+							"type": "text"
+						},
+						{
+							"key": "firstName",
+							"value": "Test",
+							"type": "text"
+						},
+						{
+							"key": "lastName",
+							"value": "User",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "123 456 789",
+							"type": "text"
+						},
+						{
+							"key": "avatar",
+							"type": "file",
+							"src": "/C:/Users/David/Downloads/images1.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"4"
+					]
+				},
+				"description": "Updates user information, must be authenticated."
+			},
+			"response": [
+				{
+					"name": "Update user by id",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "test5@scriptorium.com",
+									"type": "text"
+								},
+								{
+									"key": "firstName",
+									"value": "Test (EDITED)",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "User ",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "123 456 789",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/David/Downloads/images1.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"2"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"17pmofkegtk96\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "330"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:56:54 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 2,\n    \"email\": \"test5@scriptorium.com\",\n    \"password\": \"$2b$10$Tp7/n4obGFRS2ClL.zxyRuA2j6RWNYBwkSNdKZu9haR9EmkPIfFDG\",\n    \"firstName\": \"Test (EDITED)\",\n    \"lastName\": \"User \",\n    \"avatar\": \"/avatars/avatar-1730926614494-532279772.jpg\",\n    \"phone\": \"123 456 789\",\n    \"role\": \"USER\",\n    \"createdAt\": \"2024-11-06T20:55:44.954Z\",\n    \"updatedAt\": \"2024-11-06T20:56:54.496Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete user by id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/users/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"3"
+					]
+				},
+				"description": "Deletes the specified user, requires authentication."
+			},
+			"response": [
+				{
+					"name": "Delete user by id",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"2"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"ewd68lgqzgai\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "378"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:57:14 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"User deleted successfully.\",\n    \"user\": {\n        \"id\": 2,\n        \"email\": \"test5@scriptorium.com\",\n        \"password\": \"$2b$10$Tp7/n4obGFRS2ClL.zxyRuA2j6RWNYBwkSNdKZu9haR9EmkPIfFDG\",\n        \"firstName\": \"Test (EDITED)\",\n        \"lastName\": \"User \",\n        \"avatar\": \"/avatars/avatar-1730926614494-532279772.jpg\",\n        \"phone\": \"123 456 789\",\n        \"role\": \"USER\",\n        \"createdAt\": \"2024-11-06T20:55:44.954Z\",\n        \"updatedAt\": \"2024-11-06T20:56:54.496Z\"\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Create blog post",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"My First Blog Post COPY\",\r\n  \"description\": \"An introduction to my blog post.\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": []\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						""
+					]
+				},
+				"description": "This endpoint creates a blog post. Code templates can be linked to blog post by putting the code template ids in `codeTemplateIds.`"
+			},
+			"response": [
+				{
+					"name": "Create blog post",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"My First Blog Post\",\r\n  \"description\": \"An introduction to my blog post.\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": [1]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/posts/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								""
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"cpxtk0gba66y\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "250"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:58:52 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"title\": \"My First Blog Post COPY\",\n    \"description\": \"An introduction to my blog post.\",\n    \"content\": \"This is the main content of the blog post.\",\n    \"createdAt\": \"2024-11-06T20:58:51.729Z\",\n    \"updatedAt\": \"2024-11-06T20:58:51.729Z\",\n    \"userId\": 3,\n    \"hidden\": false\n}"
+				}
+			]
+		},
+		{
+			"name": "Get all my blog posts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						""
+					]
+				},
+				"description": "Gets all the blog posts authored by the current logged in user."
+			},
+			"response": [
+				{
+					"name": "Get all my blog posts",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/posts/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								""
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"90fy1phrw9fi\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "558"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:58:59 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 1,\n        \"title\": \"My First Blog Post COPY\",\n        \"description\": \"An introduction to my blog post.\",\n        \"content\": \"This is the main content of the blog post.\",\n        \"createdAt\": \"2024-11-06T20:58:51.729Z\",\n        \"updatedAt\": \"2024-11-06T20:58:51.729Z\",\n        \"userId\": 3,\n        \"hidden\": false,\n        \"tags\": [\n            {\n                \"id\": 21,\n                \"tag\": \"Introduction\",\n                \"blogPostId\": 1\n            },\n            {\n                \"id\": 22,\n                \"tag\": \"FirstPost\",\n                \"blogPostId\": 1\n            }\n        ],\n        \"codeTemplates\": [\n            {\n                \"id\": 1,\n                \"title\": \"Template Test\",\n                \"description\": \"Test template.\",\n                \"code\": \"print('testing')\",\n                \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n                \"updatedAt\": \"2024-11-06T20:58:37.272Z\",\n                \"langId\": 2,\n                \"userId\": 3\n            }\n        ]\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Get blog post by id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"1"
+					]
+				},
+				"description": "Gets a blog post by its id."
+			},
+			"response": [
+				{
+					"name": "Get blog post by id",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/posts/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"152gz6s22t1fg\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "556"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:59:10 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"title\": \"My First Blog Post COPY\",\n    \"description\": \"An introduction to my blog post.\",\n    \"content\": \"This is the main content of the blog post.\",\n    \"createdAt\": \"2024-11-06T20:58:51.729Z\",\n    \"updatedAt\": \"2024-11-06T20:58:51.729Z\",\n    \"userId\": 3,\n    \"hidden\": false,\n    \"tags\": [\n        {\n            \"id\": 21,\n            \"tag\": \"Introduction\",\n            \"blogPostId\": 1\n        },\n        {\n            \"id\": 22,\n            \"tag\": \"FirstPost\",\n            \"blogPostId\": 1\n        }\n    ],\n    \"codeTemplates\": [\n        {\n            \"id\": 1,\n            \"title\": \"Template Test\",\n            \"description\": \"Test template.\",\n            \"code\": \"print('testing')\",\n            \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n            \"updatedAt\": \"2024-11-06T20:58:37.272Z\",\n            \"langId\": 2,\n            \"userId\": 3\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Edit blog post",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"My First Blog Post\",\r\n  \"description\": \"An introduction to my blog post. (EDIT2)\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": [1]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"1"
+					]
+				},
+				"description": "This endpoint edits an existing blog post, requires authentication."
+			},
+			"response": [
+				{
+					"name": "Edit blog post",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"My First Blog Post\",\r\n  \"description\": \"An introduction to my blog post. (EDIT)\",\r\n  \"content\": \"This is the main content of the blog post.\",\r\n  \"tags\": [\"Introduction\", \"FirstPost\"],\r\n  \"codeTemplateIds\": [1]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/posts/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"wbssdo5g7lfi\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "558"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:59:25 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"title\": \"My First Blog Post\",\n    \"description\": \"An introduction to my blog post. (EDIT)\",\n    \"content\": \"This is the main content of the blog post.\",\n    \"createdAt\": \"2024-11-06T20:58:51.729Z\",\n    \"updatedAt\": \"2024-11-06T20:59:25.045Z\",\n    \"userId\": 3,\n    \"hidden\": false,\n    \"tags\": [\n        {\n            \"id\": 23,\n            \"tag\": \"Introduction\",\n            \"blogPostId\": 1\n        },\n        {\n            \"id\": 24,\n            \"tag\": \"FirstPost\",\n            \"blogPostId\": 1\n        }\n    ],\n    \"codeTemplates\": [\n        {\n            \"id\": 1,\n            \"title\": \"Template Test\",\n            \"description\": \"Test template.\",\n            \"code\": \"print('testing')\",\n            \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n            \"updatedAt\": \"2024-11-06T20:58:37.272Z\",\n            \"langId\": 2,\n            \"userId\": 3\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete blog post",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"2"
+					]
+				},
+				"description": "Deletes existing blog post, requires authentication."
+			},
+			"response": [
+				{
+					"name": "Delete blog post",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/posts/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"140jgpz2un313\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "39"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:59:33 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Post deleted successfully\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Save code template",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Template Test\",\r\n  \"description\": \"Test template.\",\r\n  \"code\": \"print('testing')\",\r\n  \"languageId\": 2,  // Assuming 1 is a valid language ID in your database\r\n  \"tags\": [\"Python\", \"Example\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/saveCodeTemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"saveCodeTemp"
+					]
+				},
+				"description": "Saves a code template, programming language must be specified under `languageId`. (id 1 = JavaScript, id 2 = Python, id 3 = Java, id 4 = C, id 5 = C++) Programming languages are added to the database during `startup.sh` by running the script `addLanguages.js`"
+			},
+			"response": [
+				{
+					"name": "Save code template",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Template Test\",\r\n  \"description\": \"Test template.\",\r\n  \"code\": \"print('testing')\",\r\n  \"languageId\": 2,  // Assuming 1 is a valid language ID in your database\r\n  \"tags\": [\"Python\", \"Example\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/saveCodeTemp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"saveCodeTemp"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"16rnr1axekn59\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "189"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:58:37 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"title\": \"Template Test\",\n    \"description\": \"Test template.\",\n    \"code\": \"print('testing')\",\n    \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n    \"updatedAt\": \"2024-11-06T20:58:37.272Z\",\n    \"langId\": 2,\n    \"userId\": 3\n}"
+				}
+			]
+		},
+		{
+			"name": "Get any code template",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users/getAnyTemp?query=Python",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"getAnyTemp"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "Python"
+						}
+					]
+				},
+				"description": "Gets code templates that includes the query input."
+			},
+			"response": [
+				{
+					"name": "Get any code template",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/users/getAnyTemp?query=Python",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"getAnyTemp"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "Python"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"bquuavpwz2a7\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "367"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:59:51 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 1,\n        \"title\": \"Template Test\",\n        \"description\": \"Test template.\",\n        \"code\": \"print('testing')\",\n        \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n        \"updatedAt\": \"2024-11-06T20:58:37.272Z\",\n        \"langId\": 2,\n        \"userId\": 3,\n        \"tags\": [\n            {\n                \"id\": 17,\n                \"tag\": \"Python\",\n                \"codeTemplateId\": 1\n            },\n            {\n                \"id\": 18,\n                \"tag\": \"Example\",\n                \"codeTemplateId\": 1\n            }\n        ],\n        \"user\": {\n            \"firstName\": \"Test\",\n            \"lastName\": \"User\",\n            \"email\": \"test5@scriptorium.com\"\n        }\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Get my code template",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/users/getMyTemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"getMyTemp"
+					]
+				},
+				"description": "Gets code templates saved by currently logged in user."
+			},
+			"response": [
+				{
+					"name": "Get my code template",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users/getMyTemp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"getMyTemp"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"3ylhcm1fsf8f\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "303"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 20:59:56 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"templates\": [\n        {\n            \"id\": 1,\n            \"title\": \"Template Test\",\n            \"description\": \"Test template.\",\n            \"code\": \"print('testing')\",\n            \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n            \"updatedAt\": \"2024-11-06T20:58:37.272Z\",\n            \"langId\": 2,\n            \"userId\": 3,\n            \"tags\": [\n                {\n                    \"id\": 17,\n                    \"tag\": \"Python\",\n                    \"codeTemplateId\": 1\n                },\n                {\n                    \"id\": 18,\n                    \"tag\": \"Example\",\n                    \"codeTemplateId\": 1\n                }\n            ]\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Get template by id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/users/getTemp?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"getTemp"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Gets the code template by its id."
+			},
+			"response": [
+				{
+					"name": "Get template by id",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users/getTemp?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"getTemp"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"lacqbhs9in7z\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "287"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:00:03 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"title\": \"Template Test\",\n    \"description\": \"Test template.\",\n    \"code\": \"print('testing')\",\n    \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n    \"updatedAt\": \"2024-11-06T20:58:37.272Z\",\n    \"langId\": 2,\n    \"userId\": 3,\n    \"tags\": [\n        {\n            \"id\": 17,\n            \"tag\": \"Python\",\n            \"codeTemplateId\": 1\n        },\n        {\n            \"id\": 18,\n            \"tag\": \"Example\",\n            \"codeTemplateId\": 1\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Fork template",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"templateId\": 5\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/forkTemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"forkTemp"
+					]
+				},
+				"description": "Forks an existing template and saves it as a new template. Must be logged in to save forked template."
+			},
+			"response": [
+				{
+					"name": "Fork template",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"templateId\": 1\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/forkTemp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"forkTemp"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"no951s7qhs69\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "225"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:00:29 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 2,\n    \"title\": \"Template Test (Fork)\",\n    \"description\": \"Test template. (Forked from template ID: 1)\",\n    \"code\": \"print('testing')\",\n    \"createdAt\": \"2024-11-06T21:00:29.312Z\",\n    \"updatedAt\": \"2024-11-06T21:00:29.312Z\",\n    \"langId\": 2,\n    \"userId\": 3\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete template",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/users/editTemp?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"editTemp"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Deletes existing code template, requires authentication."
+			},
+			"response": [
+				{
+					"name": "Delete template",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users/editTemp?id=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"editTemp"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"o8nudfpkf417\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "43"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:00:39 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Template deleted successfully\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Edit template",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Updated Template Title\",\r\n  \"description\": \"Updated Template Description\",\r\n  \"code\": \"print('testing edit');\",\r\n  \"tags\": [\"newTag1\", \"newTag2\"]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/editTemp?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"editTemp"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Edit code template, requires authentication."
+			},
+			"response": [
+				{
+					"name": "Edit template",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Updated Template Title\",\r\n  \"description\": \"Updated Template Description\",\r\n  \"code\": \"print('testing edit');\",\r\n  \"tags\": [\"newTag1\", \"newTag2\"]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/editTemp?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"editTemp"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"12pvu498q9sac\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "372"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:01:21 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Template updated successfully\",\n    \"template\": {\n        \"id\": 1,\n        \"title\": \"Updated Template Title\",\n        \"description\": \"Updated Template Description\",\n        \"code\": \"print('testing edit');\",\n        \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n        \"updatedAt\": \"2024-11-06T21:01:21.740Z\",\n        \"langId\": 2,\n        \"userId\": 3,\n        \"tags\": [\n            {\n                \"id\": 21,\n                \"tag\": \"newTag1\",\n                \"codeTemplateId\": 1\n            },\n            {\n                \"id\": 22,\n                \"tag\": \"newTag2\",\n                \"codeTemplateId\": 1\n            }\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Add new comment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"This is a comment on the blog post.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/1/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"1",
+						"comments"
+					]
+				},
+				"description": "Adds a comment to a blog post. Blog post id is put in the url: `posts/[id]/comments`"
+			},
+			"response": [
+				{
+					"name": "Add new comment",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"This is a comment on the blog post.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/posts/2/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								"2",
+								"comments"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"111cgel1jtc5u\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "210"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:01:49 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Comment added successfully\",\n    \"comment\": {\n        \"id\": 1,\n        \"content\": \"This is a comment on the blog post.\",\n        \"createdAt\": \"2024-11-06T21:01:48.467Z\",\n        \"userId\": 3,\n        \"blogPostId\": 2,\n        \"parentCommentId\": null,\n        \"hidden\": false\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Reply to comment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"This is a reply to an existing comment.\",\r\n  \"parentCommentId\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/5/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"5",
+						"comments"
+					]
+				},
+				"description": "Add a reply to a commnent, same as adding a comment to a post but you put `parentCommentId` in the request body."
+			},
+			"response": [
+				{
+					"name": "Reply to comment",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"This is a reply to an existing comment.\",\r\n  \"parentCommentId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/posts/2/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								"2",
+								"comments"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"a3akurjjrg5v\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "211"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:02:00 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Comment added successfully\",\n    \"comment\": {\n        \"id\": 2,\n        \"content\": \"This is a reply to an existing comment.\",\n        \"createdAt\": \"2024-11-06T21:02:00.447Z\",\n        \"userId\": 3,\n        \"blogPostId\": 2,\n        \"parentCommentId\": 1,\n        \"hidden\": false\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Fetch comments on post",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/3/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"3",
+						"comments"
+					]
+				},
+				"description": "This endpoint responds with all the comments and replies on a given post."
+			},
+			"response": [
+				{
+					"name": "Fetch comments on post",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/posts/2/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								"2",
+								"comments"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"10vpbsplnsubg\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "412"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:02:21 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 1,\n        \"content\": \"This is a comment on the blog post.\",\n        \"createdAt\": \"2024-11-06T21:01:48.467Z\",\n        \"userId\": 3,\n        \"blogPostId\": 2,\n        \"parentCommentId\": null,\n        \"hidden\": false,\n        \"replies\": [\n            {\n                \"id\": 2,\n                \"content\": \"This is a reply to an existing comment.\",\n                \"createdAt\": \"2024-11-06T21:02:00.447Z\",\n                \"userId\": 3,\n                \"blogPostId\": 2,\n                \"parentCommentId\": 1,\n                \"hidden\": false\n            }\n        ],\n        \"user\": {\n            \"firstName\": \"Test\",\n            \"lastName\": \"User\",\n            \"email\": \"test5@scriptorium.com\"\n        }\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Add or update vote",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"value\": 1,  // +1 for upvote, -1 for downvote\r\n  \"commentId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/posts/1/votes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"1",
+						"votes"
+					]
+				},
+				"description": "This endpoint puts a upvote or downvote on a post or comment, put `commentId` in request body if upvoting a comment and leave it blank otherwise. Putting +1 is an upvote and -1 is a downvote."
+			},
+			"response": [
+				{
+					"name": "Add or update vote",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"value\": 1,  // +1 for upvote, -1 for downvote\r\n  \"commentId\": \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/posts/1/votes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								"1",
+								"votes"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"d50f43rxho46\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "150"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:02:42 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Vote registered successfully\",\n    \"vote\": {\n        \"id\": 1,\n        \"value\": 1,\n        \"userId\": 3,\n        \"blogPostId\": null,\n        \"commentId\": 1,\n        \"createdAt\": \"2024-11-06T21:02:42.542Z\"\n    }\n}"
+				},
+				{
+					"name": "Add or update vote",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"value\": 1  // +1 for upvote, -1 for downvote \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/posts/2/votes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								"2",
+								"votes"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"zd8qmr17us46\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "150"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:03:43 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Vote registered successfully\",\n    \"vote\": {\n        \"id\": 2,\n        \"value\": 1,\n        \"userId\": 3,\n        \"blogPostId\": 2,\n        \"commentId\": null,\n        \"createdAt\": \"2024-11-06T21:03:43.695Z\"\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Fetch total votes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/posts/3/votes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"posts",
+						"3",
+						"votes"
+					]
+				},
+				"description": "Gets the total number of votes of a post. Total votes is sum of upvote/downvotes, if there is 1 upvote and 1 downvote, the total votes would be 0. Put post id in url."
+			},
+			"response": [
+				{
+					"name": "Fetch total votes",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/posts/2/votes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"posts",
+								"2",
+								"votes"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"3lbdab0iky24\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "76"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:03:59 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"totalPostVotes\": 1,\n    \"totalCommentVotes\": [\n        {\n            \"commentId\": null,\n            \"totalVotes\": 1\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Report content",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"contentId\": 1,  // The ID of the post or comment you're reporting\r\n    \"contentType\": \"post\",  // \"post\" for a blog post or \"comment\" for a comment\r\n    \"reason\": \"This content is inappropriate and violates guidelines\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reports",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reports"
+					]
+				},
+				"description": "Report content, put contend id and content type in response body. A reason can also be added."
+			},
+			"response": [
+				{
+					"name": "Report content",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"contentId\": 2,  // The ID of the post or comment you're reporting\r\n    \"contentType\": \"post\",  // \"post\" for a blog post or \"comment\" for a comment\r\n    \"reason\": \"This content is inappropriate and violates guidelines\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/reports",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"reports"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"k1pwustvwo18\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "44"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:04:24 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Report submitted successfully.\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Hide content",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"contentId\": 5,\r\n  \"contentType\": \"post\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reports/hide-content",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reports",
+						"hide-content"
+					]
+				},
+				"description": "Admin only endpoint. Allows admin to hide content."
+			},
+			"response": [
+				{
+					"name": "Hide content",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"contentId\": 2,\r\n  \"contentType\": \"post\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/reports/hide-content",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"reports",
+								"hide-content"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"3t17cr4k4u16\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "42"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:04:44 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Content hidden successfully.\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Fetch reported content",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/reports/reported-content",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reports",
+						"reported-content"
+					]
+				},
+				"description": "Admin only endpoint. Shows the admin a list of reported content and report details."
+			},
+			"response": [
+				{
+					"name": "Fetch reported content",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/reports/reported-content",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"reports",
+								"reported-content"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"nzagyoeczqcm\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "454"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:04:56 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"reportedPosts\": [\n        {\n            \"id\": 2,\n            \"title\": \"My First Blog Post\",\n            \"description\": \"An introduction to my blog post.\",\n            \"content\": \"This is the main content of the blog post.\",\n            \"createdAt\": \"2024-11-06T21:01:40.304Z\",\n            \"updatedAt\": \"2024-11-06T21:04:44.479Z\",\n            \"userId\": 3,\n            \"hidden\": true,\n            \"reports\": [\n                {\n                    \"id\": 1,\n                    \"reason\": \"This content is inappropriate and violates guidelines\",\n                    \"createdAt\": \"2024-11-06T21:04:24.016Z\",\n                    \"userId\": 3,\n                    \"blogPostId\": 2,\n                    \"commentId\": null\n                }\n            ]\n        }\n    ],\n    \"reportedComments\": []\n}"
+				}
+			]
+		},
+		{
+			"name": "Get post by link (visitor)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/fetchFromLink?id=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"fetchFromLink"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5"
+						}
+					]
+				},
+				"description": "Lets a visitor see a post by post id in query."
+			},
+			"response": [
+				{
+					"name": "Get post by link (visitor)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/visitors/fetchFromLink?id=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"visitors",
+								"fetchFromLink"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"buxxnil3kqg9\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "585"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:06:07 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 3,\n    \"title\": \"My First Blog Post COPY\",\n    \"description\": \"An introduction to my blog post.\",\n    \"content\": \"This is the main content of the blog post.\",\n    \"createdAt\": \"2024-11-06T21:05:32.181Z\",\n    \"updatedAt\": \"2024-11-06T21:05:32.181Z\",\n    \"userId\": 1,\n    \"hidden\": false,\n    \"tags\": [\n        {\n            \"id\": 27,\n            \"tag\": \"Introduction\",\n            \"blogPostId\": 3\n        },\n        {\n            \"id\": 28,\n            \"tag\": \"FirstPost\",\n            \"blogPostId\": 3\n        }\n    ],\n    \"codeTemplates\": [\n        {\n            \"id\": 1,\n            \"title\": \"Updated Template Title\",\n            \"description\": \"Updated Template Description\",\n            \"code\": \"print('testing edit');\",\n            \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n            \"updatedAt\": \"2024-11-06T21:01:21.740Z\",\n            \"langId\": 2,\n            \"userId\": 3\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Get code template (visitor)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/viewFromLink?id=3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"viewFromLink"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "3"
+						}
+					]
+				},
+				"description": "Lets visitor see a code template by template id in query."
+			},
+			"response": [
+				{
+					"name": "Get code template (visitor)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/visitors/viewFromLink?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"visitors",
+								"viewFromLink"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"p0b93o51ws8t\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "317"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:07:14 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"title\": \"Updated Template Title\",\n    \"description\": \"Updated Template Description\",\n    \"code\": \"print('testing edit');\",\n    \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n    \"updatedAt\": \"2024-11-06T21:01:21.740Z\",\n    \"langId\": 2,\n    \"userId\": 3,\n    \"tags\": [\n        {\n            \"id\": 21,\n            \"tag\": \"newTag1\",\n            \"codeTemplateId\": 1\n        },\n        {\n            \"id\": 22,\n            \"tag\": \"newTag2\",\n            \"codeTemplateId\": 1\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Mentioned code template",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/mentionedCodeTemplates?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"mentionedCodeTemplates"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Lists all blog posts that links to a specified code template. Put template id in query."
+			},
+			"response": [
+				{
+					"name": "Mentioned code template",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/visitors/mentionedCodeTemplates?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"visitors",
+								"mentionedCodeTemplates"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"t74e94azw4l3\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "759"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:09:40 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"title\": \"Updated Template Title\",\n    \"description\": \"Updated Template Description\",\n    \"code\": \"print('testing edit');\",\n    \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n    \"updatedAt\": \"2024-11-06T21:01:21.740Z\",\n    \"langId\": 2,\n    \"userId\": 3,\n    \"tags\": [\n        {\n            \"id\": 21,\n            \"tag\": \"newTag1\",\n            \"codeTemplateId\": 1\n        },\n        {\n            \"id\": 22,\n            \"tag\": \"newTag2\",\n            \"codeTemplateId\": 1\n        }\n    ],\n    \"blogPosts\": [\n        {\n            \"id\": 3,\n            \"title\": \"My First Blog Post COPY\",\n            \"description\": \"An introduction to my blog post.\",\n            \"content\": \"This is the main content of the blog post.\",\n            \"createdAt\": \"2024-11-06T21:05:32.181Z\",\n            \"updatedAt\": \"2024-11-06T21:05:32.181Z\",\n            \"userId\": 1,\n            \"hidden\": false,\n            \"tags\": [\n                {\n                    \"id\": 27,\n                    \"tag\": \"Introduction\",\n                    \"blogPostId\": 3\n                },\n                {\n                    \"id\": 28,\n                    \"tag\": \"FirstPost\",\n                    \"blogPostId\": 3\n                }\n            ],\n            \"user\": {\n                \"firstName\": \"Admin\",\n                \"lastName\": \"User\",\n                \"email\": \"admin@scriptorium.com\"\n            }\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Search blog post",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/searchBlogPost?query=First",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"searchBlogPost"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "First"
+						}
+					]
+				},
+				"description": "Searches for all blog posts that contain a specified word in query."
+			},
+			"response": [
+				{
+					"name": "Search blog post",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/visitors/searchBlogPost?query=First",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"visitors",
+								"searchBlogPost"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "First"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"10a0wgs8544gb\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "587"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:10:05 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 3,\n        \"title\": \"My First Blog Post COPY\",\n        \"description\": \"An introduction to my blog post.\",\n        \"content\": \"This is the main content of the blog post.\",\n        \"createdAt\": \"2024-11-06T21:05:32.181Z\",\n        \"updatedAt\": \"2024-11-06T21:05:32.181Z\",\n        \"userId\": 1,\n        \"hidden\": false,\n        \"tags\": [\n            {\n                \"id\": 27,\n                \"tag\": \"Introduction\",\n                \"blogPostId\": 3\n            },\n            {\n                \"id\": 28,\n                \"tag\": \"FirstPost\",\n                \"blogPostId\": 3\n            }\n        ],\n        \"codeTemplates\": [\n            {\n                \"id\": 1,\n                \"title\": \"Updated Template Title\",\n                \"description\": \"Updated Template Description\",\n                \"code\": \"print('testing edit');\",\n                \"createdAt\": \"2024-11-06T20:58:37.272Z\",\n                \"updatedAt\": \"2024-11-06T21:01:21.740Z\",\n                \"langId\": 2,\n                \"userId\": 3\n            }\n        ]\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Sorted blog posts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/blogPostsSorted",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"blogPostsSorted"
+					]
+				},
+				"description": "Lists all blog posts sorted by votes."
+			},
+			"response": [
+				{
+					"name": "Sorted blog posts",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/visitors/blogPostsSorted",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"visitors",
+								"blogPostsSorted"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"gku2u6mw6wqa\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "946"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:11:38 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 4,\n        \"title\": \"Test\",\n        \"description\": \"Test\",\n        \"content\": \"Test\",\n        \"createdAt\": \"2024-11-06T21:10:54.054Z\",\n        \"updatedAt\": \"2024-11-06T21:10:54.054Z\",\n        \"userId\": 1,\n        \"hidden\": false,\n        \"tags\": [\n            {\n                \"id\": 29,\n                \"tag\": \"Introduction\",\n                \"blogPostId\": 4\n            },\n            {\n                \"id\": 30,\n                \"tag\": \"FirstPost\",\n                \"blogPostId\": 4\n            }\n        ],\n        \"user\": {\n            \"firstName\": \"Admin\",\n            \"lastName\": \"User\",\n            \"email\": \"admin@scriptorium.com\"\n        },\n        \"votes\": [\n            {\n                \"id\": 3,\n                \"value\": 1,\n                \"userId\": 1,\n                \"blogPostId\": 4,\n                \"commentId\": null,\n                \"createdAt\": \"2024-11-06T21:11:28.096Z\"\n            }\n        ],\n        \"upvotes\": 1,\n        \"downvotes\": 0\n    },\n    {\n        \"id\": 3,\n        \"title\": \"My First Blog Post COPY\",\n        \"description\": \"An introduction to my blog post.\",\n        \"content\": \"This is the main content of the blog post.\",\n        \"createdAt\": \"2024-11-06T21:05:32.181Z\",\n        \"updatedAt\": \"2024-11-06T21:05:32.181Z\",\n        \"userId\": 1,\n        \"hidden\": false,\n        \"tags\": [\n            {\n                \"id\": 27,\n                \"tag\": \"Introduction\",\n                \"blogPostId\": 3\n            },\n            {\n                \"id\": 28,\n                \"tag\": \"FirstPost\",\n                \"blogPostId\": 3\n            }\n        ],\n        \"user\": {\n            \"firstName\": \"Admin\",\n            \"lastName\": \"User\",\n            \"email\": \"admin@scriptorium.com\"\n        },\n        \"votes\": [],\n        \"upvotes\": 0,\n        \"downvotes\": 0\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Sorted comments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/visitors/commentsSorted?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"visitors",
+						"commentsSorted"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Lists all comments on a specified blog post sorted by votes. Put post id in query."
+			},
+			"response": [
+				{
+					"name": "Sorted comments",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/visitors/commentsSorted?id=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"visitors",
+								"commentsSorted"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"3cdtbnopgmi4\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "652"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:12:06 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 1,\n        \"content\": \"This is a comment on the blog post.\",\n        \"createdAt\": \"2024-11-06T21:01:48.467Z\",\n        \"userId\": 3,\n        \"blogPostId\": 2,\n        \"parentCommentId\": null,\n        \"hidden\": false,\n        \"user\": {\n            \"firstName\": \"Test\",\n            \"lastName\": \"User\",\n            \"email\": \"test5@scriptorium.com\"\n        },\n        \"votes\": [\n            {\n                \"id\": 1,\n                \"value\": 1,\n                \"userId\": 3,\n                \"blogPostId\": null,\n                \"commentId\": 1,\n                \"createdAt\": \"2024-11-06T21:02:42.542Z\"\n            }\n        ],\n        \"upvotes\": 1,\n        \"downvotes\": 0\n    },\n    {\n        \"id\": 2,\n        \"content\": \"This is a reply to an existing comment.\",\n        \"createdAt\": \"2024-11-06T21:02:00.447Z\",\n        \"userId\": 3,\n        \"blogPostId\": 2,\n        \"parentCommentId\": 1,\n        \"hidden\": false,\n        \"user\": {\n            \"firstName\": \"Test\",\n            \"lastName\": \"User\",\n            \"email\": \"test5@scriptorium.com\"\n        },\n        \"votes\": [],\n        \"upvotes\": 0,\n        \"downvotes\": 0\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Execute code",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"language\": \"Java\",\r\n    \"code\": \"public class Main { public static void main(String[] args) { System.out.println(\\\"Hello from Java\\\"); } }\",\r\n    \"input\": \"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/execute",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"execute"
+					]
+				},
+				"description": "Allows code execution, must specify language. Input can be provided if needed."
+			},
+			"response": [
+				{
+					"name": "Execute code",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"language\": \"Java\",\r\n    \"code\": \"public class Main { public static void main(String[] args) { System.out.println(\\\"Hello from Java\\\"); } }\",\r\n    \"input\": \"\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"execute"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"1129hhwv2cp1a\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "46"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:12:25 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"output\": \"Hello from Java\\r\\n\",\n    \"errors\": null\n}"
+				},
+				{
+					"name": "Execute code",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"language\": \"Python\",\r\n    \"code\": \"name = input('Enter your name: ')\\nprint(f'Hello, {name}!')\",\r\n    \"input\": \"Alice\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"execute"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"wnnhs9ymvk1p\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "61"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:13:21 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"output\": \"Enter your name: Hello, Alice!\\r\\n\",\n    \"errors\": null\n}"
+				}
+			]
+		},
+		{
+			"name": "Execute code template",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"templateId\": 3, // Replace with a valid template ID in your database\r\n  \"input\": \"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/executeTemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"executeTemp"
+					]
+				},
+				"description": "Executes code saved in a code template."
+			},
+			"response": [
+				{
+					"name": "Execute code template",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"templateId\": 1, // Replace with a valid template ID in your database\r\n  \"input\": \"\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/executeTemp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"executeTemp"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "ETag",
+							"value": "\"17ftdezmyn017\""
+						},
+						{
+							"key": "Content-Length",
+							"value": "43"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 06 Nov 2024 21:13:49 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"output\": \"testing edit\\r\\n\",\n    \"errors\": null\n}"
+				}
+			]
+		}
+	]
+}
