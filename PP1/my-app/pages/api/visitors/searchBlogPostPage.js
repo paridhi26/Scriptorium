@@ -11,6 +11,7 @@ export default async function handler(req, res) {
     const currentPage = parseInt(page, 10);
     const size = parseInt(pageSize, 10);
 
+    
     if (!query) {
         return res.status(400).json({ message: 'Search query is required.' });
     }
