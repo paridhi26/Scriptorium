@@ -16,6 +16,7 @@ export default async function login(req, res) {
         return res.status(400).json({ message: 'Email and password are required.' });
     }
 
+    
     try {
         // Find user by email
         const user = await prisma.user.findUnique({
