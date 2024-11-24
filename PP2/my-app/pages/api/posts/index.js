@@ -5,31 +5,50 @@ export default async function handler(req, res) {
   // Handle creating a new post
   if (req.method === 'POST') {
     return isAuthenticated(req, res, async () => {
-      const { title, description, content, tags = [], codeTemplateIds = [] } = req.body;
+      const { title, description, content, tags = [], codeTemplateIds } = req.body; // Optional `codeTemplateIds`
       const authorId = req.user.id;
-
+  
       if (!title || !description || !content) {
         return res.status(400).json({ message: 'Missing required fields' });
       }
-
+  
       try {
-        // Check if all `codeTemplateIds` exist
-        const existingCodeTemplates = await prisma.codeTemplate.findMany({
-          where: { id: { in: codeTemplateIds } },
-          select: { id: true },
-        });
-
-        const existingIds = existingCodeTemplates.map(ct => ct.id);
-        const missingIds = codeTemplateIds.filter(id => !existingIds.includes(id));
-
-        if (missingIds.length > 0) {
-          return res.status(400).json({
-            message: 'Some CodeTemplate IDs do not exist',
-            missingIds,
+        // Initialize codeTemplateConnections array
+        let codeTemplateConnections = [];
+  
+        // Process `codeTemplateIds` only if it's provided and is a non-empty array
+        if (Array.isArray(codeTemplateIds) && codeTemplateIds.length > 0) {
+          // Convert all `codeTemplateIds` to integers
+          const codeTemplateIdsInt = codeTemplateIds.map((id) => {
+            const parsedId = parseInt(id, 10);
+            if (isNaN(parsedId)) {
+              throw new Error('codeTemplateIds must contain valid integers.');
+            }
+            return parsedId;
           });
+  
+          // Fetch existing code templates for the provided IDs
+          const existingCodeTemplates = await prisma.codeTemplate.findMany({
+            where: { id: { in: codeTemplateIdsInt } },
+            select: { id: true },
+          });
+  
+          const existingIds = existingCodeTemplates.map((ct) => ct.id);
+          const missingIds = codeTemplateIdsInt.filter((id) => !existingIds.includes(id));
+  
+          // If some IDs are invalid, return an error
+          if (missingIds.length > 0) {
+            return res.status(400).json({
+              message: 'Some CodeTemplate IDs do not exist',
+              missingIds,
+            });
+          }
+  
+          // Prepare `connect` objects for valid IDs
+          codeTemplateConnections = existingIds.map((id) => ({ id }));
         }
-
-        // Create the BlogPost with related tags and code templates
+  
+        // Create the BlogPost with related tags and optional code templates
         const post = await prisma.blogPost.create({
           data: {
             title,
@@ -37,14 +56,16 @@ export default async function handler(req, res) {
             content,
             userId: authorId,
             tags: {
-              create: tags.map(tag => ({ tag })),
+              create: tags.map((tag) => ({ tag })),
             },
-            codeTemplates: {
-              connect: codeTemplateIds.map(id => ({ id })),
-            },
+            ...(codeTemplateConnections.length > 0 && {
+              codeTemplates: {
+                connect: codeTemplateConnections,
+              },
+            }),
           },
         });
-
+  
         res.status(201).json(post);
       } catch (error) {
         console.error('Error creating post:', error);
@@ -52,6 +73,7 @@ export default async function handler(req, res) {
       }
     });
   }
+  
   
   // Handle fetching all posts for the authenticated user
   else if (req.method === 'GET') {
