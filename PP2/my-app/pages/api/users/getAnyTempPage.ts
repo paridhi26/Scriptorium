@@ -1,34 +1,48 @@
 import prisma from '@lib/prisma';
 import jwt from 'jsonwebtoken';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-const SECRET_KEY = process.env.JWT_SECRET;
+const SECRET_KEY = process.env.JWT_SECRET as string;
 
-export default async function handler(req, res) {
+interface DecodedToken {
+    userId: number;
+}
+
+interface TemplateQuery {
+    search?: string;
+    page?: string;
+    pageSize?: string;
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     if (req.method !== 'GET') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).json({ message: 'Method not allowed' });
+        return;
     }
 
     // Get the JWT token from the Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
     }
 
     const token = authHeader.split(' ')[1];
 
     try {
         // Verify the token
-        const decoded = jwt.verify(token, SECRET_KEY);
+        const decoded = jwt.verify(token, SECRET_KEY) as DecodedToken;
         const userId = decoded.userId;
 
-        const { search, page = 1, pageSize = 10 } = req.query; // Pagination parameters with defaults
+        const { search, page = '1', pageSize = '10' }: TemplateQuery = req.query as any;
 
         // Validate page and pageSize
         const currentPage = parseInt(page, 10);
         const size = parseInt(pageSize, 10);
 
         if (isNaN(currentPage) || currentPage <= 0 || isNaN(size) || size <= 0) {
-            return res.status(400).json({ message: 'Invalid page or pageSize.' });
+            res.status(400).json({ message: 'Invalid page or pageSize.' });
+            return;
         }
 
         // Find the authenticated user by userId from the JWT
@@ -37,7 +51,8 @@ export default async function handler(req, res) {
         });
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            res.status(404).json({ message: 'User not found.' });
+            return;
         }
 
         // Build the search filters only if `search` is defined
@@ -86,10 +101,10 @@ export default async function handler(req, res) {
             totalPages,
             templates,
         });
-
-    } catch (error) {
+    } catch (error: any) {
         if (error.name === 'JsonWebTokenError') {
-            return res.status(403).json({ message: 'Invalid or expired token' });
+            res.status(403).json({ message: 'Invalid or expired token' });
+            return;
         }
         console.error('Error fetching templates:', error);
         res.status(500).json({ error: 'An error occurred while fetching the templates.' });

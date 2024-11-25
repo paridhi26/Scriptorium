@@ -1,29 +1,38 @@
 import prisma from '@lib/prisma';
 import jwt from 'jsonwebtoken';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-// used chatGPT to replace previous authentication logic with new one
+const SECRET_KEY = process.env.JWT_SECRET as string;
 
-const SECRET_KEY = process.env.JWT_SECRET;
+interface DecodedToken {
+    userId: number;
+}
 
-export default async function handler(req, res) {
+interface SearchQuery {
+    search?: string;
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     if (req.method !== 'GET') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).json({ message: 'Method not allowed' });
+        return;
     }
 
     // Get the JWT token from the Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
     }
 
     const token = authHeader.split(' ')[1];
 
     try {
         // Verify the token
-        const decoded = jwt.verify(token, SECRET_KEY);
+        const decoded = jwt.verify(token, SECRET_KEY) as DecodedToken;
         const userId = decoded.userId;
 
-        const { search } = req.query; // Capture the search term from query params
+        const { search }: SearchQuery = req.query as any; // Capture the search term from query params
 
         // Find the authenticated user by userId from the JWT
         const user = await prisma.user.findUnique({
@@ -31,17 +40,18 @@ export default async function handler(req, res) {
         });
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            res.status(404).json({ message: 'User not found.' });
+            return;
         }
 
         // Build the search filters only if `search` is defined
         const searchFilters = search
             ? [
-                { title: { contains: search } },
-                { description: { contains: search } },
+                { title: { contains: search } }, // Search in title
+                { description: { contains: search } }, // Search in description
                 {
                     tags: {
-                        some: { tag: { contains: search } },
+                        some: { tag: { contains: search } }, // Search in tags
                     },
                 },
             ]
@@ -59,10 +69,10 @@ export default async function handler(req, res) {
         });
 
         res.status(200).json({ templates });
-
-    } catch (error) {
+    } catch (error: any) {
         if (error.name === 'JsonWebTokenError') {
-            return res.status(403).json({ message: 'Invalid or expired token' });
+            res.status(403).json({ message: 'Invalid or expired token' });
+            return;
         }
         console.error('Error fetching templates:', error);
         res.status(500).json({ error: 'An error occurred while fetching the templates.' });

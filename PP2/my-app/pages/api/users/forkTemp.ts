@@ -1,44 +1,55 @@
 import prisma from '@lib/prisma';
 import jwt from 'jsonwebtoken';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-const SECRET_KEY = process.env.JWT_SECRET;
+const SECRET_KEY = process.env.JWT_SECRET as string;
 
-export default async function forkTemplate(req, res) {
+interface DecodedToken {
+    userId: number;
+}
+
+export default async function forkTemplate(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).json({ message: 'Method not allowed' });
+        return;
     }
 
     // Get the JWT token from the Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
     }
 
     const token = authHeader.split(' ')[1];
+    let userId: number;
 
-    let userId;
     try {
         // Verify the token
-        const decoded = jwt.verify(token, SECRET_KEY);
+        const decoded = jwt.verify(token, SECRET_KEY) as DecodedToken;
         userId = decoded.userId;
     } catch (error) {
-        return res.status(403).json({ message: 'Invalid or expired token' });
+        res.status(403).json({ message: 'Invalid or expired token' });
+        return;
     }
 
-    const { templateId } = req.body;
+    const { templateId }: { templateId: number } = req.body;
+
     if (!templateId) {
-        return res.status(400).json({ message: 'Template ID is required.' });
+        res.status(400).json({ message: 'Template ID is required.' });
+        return;
     }
 
     try {
         // Fetch the original template details
         const originalTemplate = await prisma.codeTemplate.findUnique({
-            where: { id: parseInt(templateId) },
+            where: { id: templateId },
             include: { tags: true, language: true },
         });
 
         if (!originalTemplate) {
-            return res.status(404).json({ message: 'Original template not found.' });
+            res.status(404).json({ message: 'Original template not found.' });
+            return;
         }
 
         // Prepare the data for the new template
@@ -46,8 +57,8 @@ export default async function forkTemplate(req, res) {
             title: `${originalTemplate.title} (Fork)`,
             description: `${originalTemplate.description} (Forked from template ID: ${originalTemplate.id})`,
             code: originalTemplate.code,
-            languageId: originalTemplate.langId,
-            tags: originalTemplate.tags.map(tag => tag.tag),
+            languageId: originalTemplate.language?.id,
+            tags: originalTemplate.tags.map((tag) => tag.tag),
         };
 
         // Make internal request to saveCodeTemp to create the new forked template
@@ -62,14 +73,14 @@ export default async function forkTemplate(req, res) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            return res.status(response.status).json({ message: 'Failed to fork template', error: errorData });
+            res.status(response.status).json({ message: 'Failed to fork template', error: errorData });
+            return;
         }
 
         const newTemplate = await response.json();
-        return res.status(201).json(newTemplate);
-
-    } catch (error) {
+        res.status(201).json(newTemplate);
+    } catch (error: any) {
         console.error('Error forking template:', error);
-        return res.status(500).json({ message: 'An error occurred while forking the template.' });
+        res.status(500).json({ message: 'An error occurred while forking the template.' });
     }
 }
