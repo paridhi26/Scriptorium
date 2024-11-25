@@ -1,11 +1,20 @@
 import prisma from '@lib/prisma';
 import { isAuthenticated } from '@auth/logout';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-// chatGPT
+// Extend NextApiRequest to include user information
+interface ExtendedNextApiRequest extends NextApiRequest {
+    user?: {
+        id: number;
+        email: string;
+        role: string;
+    };
+}
 
-export default async function handler(req, res) {
+export default async function handler(req: ExtendedNextApiRequest, res: NextApiResponse): Promise<void> {
     if (req.method !== 'GET') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).json({ message: 'Method not allowed' });
+        return;
     }
 
     return isAuthenticated(req, res, async () => {
@@ -23,9 +32,9 @@ export default async function handler(req, res) {
             });
 
             res.status(200).json({ reportedPosts, reportedComments });
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching reported content:', error);
             res.status(500).json({ message: 'An error occurred while fetching reported content.' });
         }
-    }, true); // Pass `true` to require ADMIN role
+    }, true); // `true` to require ADMIN role
 }

@@ -1,19 +1,29 @@
 import prisma from '@lib/prisma';
 import { isAuthenticated } from '@auth/logout';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-// chatGPT
+// Extend NextApiRequest to include user information
+interface ExtendedNextApiRequest extends NextApiRequest {
+    user?: {
+        id: number;
+        email: string;
+        role: string; 
+    };
+}
 
-export default async function handler(req, res) {
+export default async function handler(req: ExtendedNextApiRequest, res: NextApiResponse): Promise<void> {
     if (req.method !== 'PUT') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).json({ message: 'Method not allowed' });
+        return;
     }
 
     // Ensure the user is authenticated and is an admin
     isAuthenticated(req, res, async () => {
-        const { contentId, contentType } = req.body;
+        const { contentId, contentType }: { contentId: number; contentType: string } = req.body;
 
         if (!contentId || !contentType) {
-            return res.status(400).json({ message: 'Content ID and type are required.' });
+            res.status(400).json({ message: 'Content ID and type are required.' });
+            return;
         }
 
         try {
@@ -28,11 +38,12 @@ export default async function handler(req, res) {
                     data: { hidden: true },
                 });
             } else {
-                return res.status(400).json({ message: 'Invalid content type.' });
+                res.status(400).json({ message: 'Invalid content type.' });
+                return;
             }
 
             res.status(200).json({ message: 'Content hidden successfully.' });
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error hiding content:', error);
             res.status(500).json({ message: 'An error occurred while hiding the content.' });
         }
