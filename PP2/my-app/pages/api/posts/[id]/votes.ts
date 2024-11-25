@@ -1,10 +1,22 @@
 import prisma from '@lib/prisma';
 import { isAuthenticated } from '@auth/logout';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-// chatGPT
+// Extend NextApiRequest to include user information
+interface ExtendedNextApiRequest extends NextApiRequest {
+    user?: {
+        id: number;
+        email: string;
+    };
+}
 
-export default async function handler(req, res) {
-    const postId = parseInt(req.query.id);
+export default async function handler(req: ExtendedNextApiRequest, res: NextApiResponse): Promise<void> {
+    const postId = parseInt(req.query.id as string, 10);
+
+    if (isNaN(postId)) {
+        res.status(400).json({ message: 'Invalid post ID' });
+        return;
+    }
 
     if (req.method === 'GET') {
         // Fetch the total votes for the blog post
@@ -21,29 +33,31 @@ export default async function handler(req, res) {
                 where: { blogPostId: postId },
             });
 
-            const totalPostVotes = postVotes.length > 0 ? postVotes[0]._sum.value : 0;
-            const totalCommentVotes = commentVotes.map(vote => ({
+            const totalPostVotes = postVotes.length > 0 ? postVotes[0]._sum?.value ?? 0 : 0;
+            const totalCommentVotes = commentVotes.map((vote) => ({
                 commentId: vote.commentId,
-                totalVotes: vote._sum.value,
+                totalVotes: vote._sum?.value ?? 0,
             }));
 
             res.status(200).json({ totalPostVotes, totalCommentVotes });
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching votes:', error);
             res.status(500).json({ message: 'An error occurred while fetching votes.' });
         }
     } else if (req.method === 'POST') {
         // Add or update a vote for a blog post or comment
         return isAuthenticated(req, res, async () => {
-            const { value, commentId } = req.body; // `commentId` is optional for post votes
-            const userId = req.user.id;
+            const { value, commentId }: { value: number; commentId?: number } = req.body;
+            const userId = req.user?.id;
 
             if (![1, -1].includes(value)) {
-                return res.status(400).json({ message: 'Invalid vote value. Must be +1 or -1.' });
+                res.status(400).json({ message: 'Invalid vote value. Must be +1 or -1.' });
+                return;
             }
 
             try {
                 let vote;
+
                 if (commentId) {
                     // Vote on a comment
                     const existingVote = await prisma.vote.findFirst({
@@ -83,7 +97,7 @@ export default async function handler(req, res) {
                 }
 
                 res.status(201).json({ message: 'Vote registered successfully', vote });
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Error saving vote:', error);
                 res.status(500).json({ message: 'An error occurred while saving the vote.' });
             }
