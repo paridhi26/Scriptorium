@@ -1,22 +1,40 @@
 import prisma from '@lib/prisma';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
-    const { id, page = 1, pageSize = 10 } = req.query;
+interface Comment {
+    id: number;
+    content: string;
+    createdAt: string;
+    user: {
+        firstName: string;
+        lastName: string;
+        email: string;
+    };
+    votes: { value: number }[];
+    upvotes?: number;
+    downvotes?: number;
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
+    const { id, page = '1', pageSize = '10' } = req.query;
 
     if (req.method !== 'GET') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).json({ message: 'Method not allowed' });
+        return;
     }
 
     // Validate `id`, `page`, and `pageSize`
-    const blogPostId = parseInt(id, 10);
-    const currentPage = parseInt(page, 10);
-    const size = parseInt(pageSize, 10);
+    const blogPostId = parseInt(id as string, 10);
+    const currentPage = parseInt(page as string, 10);
+    const size = parseInt(pageSize as string, 10);
 
     if (isNaN(blogPostId)) {
-        return res.status(400).json({ message: 'Invalid blog post ID.' });
+        res.status(400).json({ message: 'Invalid blog post ID.' });
+        return;
     }
     if (isNaN(currentPage) || currentPage <= 0 || isNaN(size) || size <= 0) {
-        return res.status(400).json({ message: 'Invalid page or pageSize.' });
+        res.status(400).json({ message: 'Invalid page or pageSize.' });
+        return;
     }
 
     try {
@@ -47,9 +65,9 @@ export default async function handler(req, res) {
 
         // Sort comments by calculated upvotes and downvotes
         const sortedComments = comments
-            .map(comment => {
-                const upvotes = comment.votes.filter(vote => vote.value === 1).length;
-                const downvotes = comment.votes.filter(vote => vote.value === -1).length;
+            .map((comment) => {
+                const upvotes = comment.votes.filter((vote) => vote.value === 1).length;
+                const downvotes = comment.votes.filter((vote) => vote.value === -1).length;
                 return { ...comment, upvotes, downvotes };
             })
             .sort((a, b) => b.upvotes - a.upvotes || a.downvotes - b.downvotes);
@@ -57,15 +75,15 @@ export default async function handler(req, res) {
         const totalPages = Math.ceil(totalComments / size);
 
         // Return sorted comments with pagination metadata
-        return res.status(200).json({
+        res.status(200).json({
             currentPage,
             pageSize: size,
             totalComments,
             totalPages,
             comments: sortedComments,
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error fetching top-rated comments:', error);
-        return res.status(500).json({ message: 'An error occurred while fetching comments.' });
+        res.status(500).json({ message: 'An error occurred while fetching comments.' });
     }
 }

@@ -1,18 +1,38 @@
 import prisma from '@lib/prisma';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
+interface BlogPost {
+    id: number;
+    title: string;
+    description: string;
+    content: string;
+    hidden: boolean;
+    tags: { id: number; tag: string }[];
+    user: {
+        firstName: string;
+        lastName: string;
+        email: string;
+    };
+    votes: { value: number }[];
+    upvotes?: number;
+    downvotes?: number;
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     if (req.method !== 'GET') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).json({ message: 'Method not allowed' });
+        return;
     }
 
-    const { page = 1, pageSize = 10 } = req.query;
+    const { page = '1', pageSize = '10' } = req.query;
 
     // Validate pagination parameters
-    const currentPage = parseInt(page, 10);
-    const size = parseInt(pageSize, 10);
+    const currentPage = parseInt(page as string, 10);
+    const size = parseInt(pageSize as string, 10);
 
     if (isNaN(currentPage) || currentPage <= 0 || isNaN(size) || size <= 0) {
-        return res.status(400).json({ message: 'Invalid page or pageSize.' });
+        res.status(400).json({ message: 'Invalid page or pageSize.' });
+        return;
     }
 
     try {
@@ -28,8 +48,8 @@ export default async function handler(req, res) {
                     select: {
                         firstName: true,
                         lastName: true,
-                        email: true
-                    }
+                        email: true,
+                    },
                 },
                 votes: true, // Include votes for aggregation
             },
@@ -44,9 +64,9 @@ export default async function handler(req, res) {
 
         // Sort blog posts based on the number of upvotes and downvotes
         const sortedBlogPosts = blogPosts
-            .map(post => {
-                const upvotes = post.votes.filter(vote => vote.value === 1).length;
-                const downvotes = post.votes.filter(vote => vote.value === -1).length;
+            .map((post) => {
+                const upvotes = post.votes.filter((vote) => vote.value === 1).length;
+                const downvotes = post.votes.filter((vote) => vote.value === -1).length;
                 return { ...post, upvotes, downvotes };
             })
             .sort((a, b) => b.upvotes - a.upvotes || a.downvotes - b.downvotes);
@@ -54,15 +74,15 @@ export default async function handler(req, res) {
         // Calculate total pages
         const totalPages = Math.ceil(totalBlogPosts / size);
 
-        return res.status(200).json({
+        res.status(200).json({
             currentPage,
             pageSize: size,
             totalBlogPosts,
             totalPages,
             blogPosts: sortedBlogPosts,
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error fetching top-rated blog posts:', error);
-        return res.status(500).json({ message: 'An error occurred while fetching blog posts.' });
+        res.status(500).json({ message: 'An error occurred while fetching blog posts.' });
     }
 }

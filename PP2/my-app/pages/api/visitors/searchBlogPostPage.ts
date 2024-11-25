@@ -1,49 +1,81 @@
 import prisma from '@lib/prisma';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
+interface Tag {
+    id: number;
+    tag: string;
+}
+
+interface CodeTemplate {
+    id: number;
+    title: string;
+    description: string;
+    code: string;
+}
+
+interface BlogPost {
+    id: number;
+    title: string;
+    content: string;
+    hidden: boolean;
+    tags: Tag[];
+    codeTemplates: CodeTemplate[];
+}
+
+interface PaginatedResponse {
+    currentPage: number;
+    pageSize: number;
+    totalBlogs: number;
+    totalPages: number;
+    blogs: BlogPost[];
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     if (req.method !== 'GET') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).json({ message: 'Method not allowed' });
+        return;
     }
 
-    const { query, page = 1, pageSize = 10 } = req.query;
+    const { query, page = '1', pageSize = '10' } = req.query;
 
     // Validate pagination parameters
-    const currentPage = parseInt(page, 10);
-    const size = parseInt(pageSize, 10);
+    const currentPage = parseInt(page as string, 10);
+    const size = parseInt(pageSize as string, 10);
 
-    if (!query) {
-        return res.status(400).json({ message: 'Search query is required.' });
+    if (!query || typeof query !== 'string') {
+        res.status(400).json({ message: 'Search query is required.' });
+        return;
     }
 
     if (isNaN(currentPage) || currentPage <= 0 || isNaN(size) || size <= 0) {
-        return res.status(400).json({ message: 'Invalid page or pageSize.' });
+        res.status(400).json({ message: 'Invalid page or pageSize.' });
+        return;
     }
 
     const searchQuery = query.toLowerCase();
 
-    
     try {
         // Calculate the offset for pagination
         const skip = (currentPage - 1) * size;
 
         // Perform a search on the blog posts by title, content, tags, or associated code templates
-        const blogs = await prisma.blogPost.findMany({
+        const blogs: BlogPost[] = await prisma.blogPost.findMany({
             where: {
                 hidden: false, // Exclude hidden posts
                 OR: [
-                    { title: { contains: searchQuery, mode: 'insensitive' } }, // Case-insensitive search
-                    { content: { contains: searchQuery, mode: 'insensitive' } },
+                    { title: { contains: searchQuery } }, // Case-insensitive by default in SQLite
+                    { content: { contains: searchQuery } },
                     {
                         tags: {
-                            some: { tag: { contains: searchQuery, mode: 'insensitive' } },
+                            some: { tag: { contains: searchQuery } },
                         },
                     },
                     {
                         codeTemplates: {
                             some: {
                                 OR: [
-                                    { title: { contains: searchQuery, mode: 'insensitive' } },
-                                    { code: { contains: searchQuery, mode: 'insensitive' } },
+                                    { title: { contains: searchQuery } },
+                                    { code: { contains: searchQuery } },
                                 ],
                             },
                         },
@@ -63,19 +95,19 @@ export default async function handler(req, res) {
             where: {
                 hidden: false,
                 OR: [
-                    { title: { contains: searchQuery, mode: 'insensitive' } },
-                    { content: { contains: searchQuery, mode: 'insensitive' } },
+                    { title: { contains: searchQuery } },
+                    { content: { contains: searchQuery } },
                     {
                         tags: {
-                            some: { tag: { contains: searchQuery, mode: 'insensitive' } },
+                            some: { tag: { contains: searchQuery } },
                         },
                     },
                     {
                         codeTemplates: {
                             some: {
                                 OR: [
-                                    { title: { contains: searchQuery, mode: 'insensitive' } },
-                                    { code: { contains: searchQuery, mode: 'insensitive' } },
+                                    { title: { contains: searchQuery } },
+                                    { code: { contains: searchQuery } },
                                 ],
                             },
                         },
@@ -87,16 +119,18 @@ export default async function handler(req, res) {
         const totalPages = Math.ceil(totalBlogs / size);
 
         // Return the found blog posts along with pagination metadata
-        return res.status(200).json({
+        const response: PaginatedResponse = {
             currentPage,
             pageSize: size,
             totalBlogs,
             totalPages,
             blogs,
-        });
+        };
 
-    } catch (error) {
+        res.status(200).json(response);
+    } catch (error: any) {
         console.error('Error searching blog posts:', error);
-        return res.status(500).json({ message: 'An error occurred while searching blog posts.' });
+        res.status(500).json({ message: 'An error occurred while searching blog posts.' });
     }
 }
+
