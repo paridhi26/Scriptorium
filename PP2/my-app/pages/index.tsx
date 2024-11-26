@@ -52,7 +52,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="bg-gray-100 py-20">
         <div className="container mx-auto text-center px-4">
           <h1 className="text-5xl font-extrabold mb-4 text-gray-800">
@@ -132,7 +132,7 @@ const Home: React.FC = () => {
           </div>
         </section>
       </div>
-    </Layout>
+    </>
   );
 };
 
