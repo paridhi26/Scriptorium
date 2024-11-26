@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
+import Link from "next/link";
 
 // Define types for the fetched data
 interface Template {
@@ -51,12 +52,24 @@ const Home: React.FC = () => {
 
   return (
     <Layout>
-      <h1 className="text-3xl font-bold text-center text-gray-800">
-        Welcome to Scriptorium
-      </h1>
-      <p className="mt-4 text-lg text-gray-600 text-center">
-        Write, execute, and share code in multiple programming languages. Join our community of developers today!
-      </p>
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Welcome to Scriptorium
+        </h1>
+        <p className="text-lg text-gray-600 mb-8">
+          Write, execute, and share code in multiple programming languages. Join our community of developers today!
+        </p>
+
+        {/* Call-to-Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-12">
+          <Link href="/editor" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+            Launch Online Editor
+          </Link>
+          <Link href="/login" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+            Sign Up Today
+          </Link>
+        </div>
+      </div>
 
       {/* Top Templates Section */}
       <section className="mt-12">
