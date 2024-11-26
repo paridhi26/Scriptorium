@@ -6,17 +6,13 @@ const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
   const { login } = useAuth();
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    const endpoint = isLoginMode ? "/api/auth/login" : "/api/auth/signup";
+    setError("");
 
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
 
@@ -24,7 +20,9 @@ const Login = () => {
       // Step 1: Authenticate and get authToken + userId
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
 
@@ -63,25 +61,26 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white p-8 rounded shadow-md">
-        <h1 className="text-xl font-bold text-center mb-4">
-          {isLoginMode ? "Login" : "Create an Account"}
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+        <h1 className="text-xl font-semibold mb-4">
+          {isLogin ? "Login" : "Create an Account"}
         </h1>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-        <form onSubmit={handleAuth}>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
-              id="email"
               type="email"
+              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
             />
           </div>
 
@@ -90,23 +89,20 @@ const Login = () => {
               Password
             </label>
             <input
-              id="password"
               type="password"
+              id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
             />
           </div>
 
           <button
             type="submit"
-            disabled={loading}
-            className={`w-full py-2 px-4 rounded text-white ${
-              loading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            className="bg-blue-600 text-white py-2 px-4 rounded w-full hover:bg-blue-700"
           >
-            {loading ? "Processing..." : isLoginMode ? "Login" : "Sign Up"}
+            {isLogin ? "Login" : "Sign Up"}
           </button>
         </form>
       </div>

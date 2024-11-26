@@ -61,7 +61,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </header>
 
-      <main className="flex-grow max-w-7xl mx-auto p-6">{children}</main>
+      <main className="flex-grow">{children}</main>
 
       <footer className="bg-gray-800 text-white py-4">
         <div className="text-center">
