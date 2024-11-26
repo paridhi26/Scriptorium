@@ -1,42 +1,45 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import { promisify } from 'util';
+import os from 'os';
 import { exec } from 'child_process';
+import { promisify } from 'util';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const execAsync = promisify(exec);
 
-const execWithTimeout = (cmd: string, timeout = 10000): Promise<{ stdout: string; stderr: string }> => {
-    return new Promise((resolve, reject) => {
-        const process = exec(cmd, (error, stdout, stderr) => {
-            if (error) return reject(error);
-            resolve({ stdout, stderr });
-        });
+// Define the structure of supported languages
+interface LanguageConfig {
+    fileExtension: string;
+    dockerImage: string;
+    command: string;
+}
 
-        setTimeout(() => {
-            process.kill();
-            reject(new Error('Execution timeout exceeded.'));
-        }, timeout);
-    });
-};
-
-// Supported languages and their corresponding file extensions
-const fileExtensionMap: Record<string, string> = {
-    python: '.py',
-    javascript: '.js',
-    java: '.java',
-    c: '.c',
-    'c++': '.cpp',
-};
-
-// Supported Docker images for each language
-const dockerImageMap: Record<string, string> = {
-    python: 'sandbox-python',
-    javascript: 'sandbox-node',
-    java: 'sandbox-java',
-    c: 'sandbox-c',
-    'c++': 'sandbox-cpp',
+const supportedLanguages: Record<string, LanguageConfig> = {
+    python: {
+        fileExtension: '.py',
+        dockerImage: 'python-executor',
+        command: 'python3 /app/code.py',
+    },
+    javascript: {
+        fileExtension: '.js',
+        dockerImage: 'node-executor',
+        command: 'node /app/code.js',
+    },
+    java: {
+        fileExtension: '.java',
+        dockerImage: 'java-executor',
+        command: 'javac /app/Main.java && java -cp /app Main',
+    },
+    c: {
+        fileExtension: '.c',
+        dockerImage: 'c-executor',
+        command: 'gcc /app/code.c -o /app/code && /app/code',
+    },
+    cpp: {
+        fileExtension: '.cpp',
+        dockerImage: 'cpp-executor',
+        command: 'g++ /app/code.cpp -o /app/code && /app/code',
+    },
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
@@ -45,61 +48,48 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return;
     }
 
-    const { language, code, input }: { language?: string; code?: string; input?: string } = req.body;
+    const { language, code, input } = req.body;
 
     if (!language || !code) {
         res.status(400).json({ message: 'Language and code are required.' });
         return;
     }
 
-    const fileExtension = fileExtensionMap[language.toLowerCase()];
-    if (!fileExtension) {
-        res.status(400).json({ message: 'Unsupported language.' });
+    if (!supportedLanguages[language]) {
+        res.status(400).json({ message: `Unsupported language: ${language}` });
         return;
     }
 
-    const dockerImage = dockerImageMap[language.toLowerCase()];
-    if (!dockerImage) {
-        res.status(400).json({ message: 'Unsupported language.' });
-        return;
-    }
-
-    const tempDir = `/tmp/${uuidv4()}`;
-    const fileName = `Main${fileExtension}`;
-    const filePath = path.join(tempDir, fileName);
+    const { fileExtension, dockerImage, command } = supportedLanguages[language];
 
     try {
-        // Create temporary directory and write the code to a file
-        await fs.mkdir(tempDir, { recursive: true });
+        const tempDir = os.tmpdir();
+        const fileName = language === 'java' ? 'Main.java' : `code${fileExtension}`;
+        const filePath = path.join(tempDir, fileName);
+
+        // Write the user-provided code to a temporary file
         await fs.writeFile(filePath, code);
 
+        // Construct the Docker command
         const dockerCommand = input
-            ? `echo "${input}" | docker run --rm -i -v ${tempDir}:/usr/src/app ${dockerImage} ${fileName}`
-            : `docker run --rm -v ${tempDir}:/usr/src/app ${dockerImage} ${fileName}`;
+            ? `docker run --rm -v ${filePath}:/app/${fileName} ${dockerImage} sh -c "echo '${input}' | ${command}"`
+            : `docker run --rm -v ${filePath}:/app/${fileName} ${dockerImage} sh -c "${command}"`;
 
-        console.log(`Docker command: ${dockerCommand}`);
+        const { stdout, stderr } = await execAsync(dockerCommand, { shell: true });
 
-        const { stdout, stderr } = await execWithTimeout(dockerCommand);
+        res.status(200).json({
+            stdout: stdout.trim(),
+            stderr: stderr.trim() || null,
+        });
+    } catch (error: any) {
+        // Capture stdout and stderr even when there's an error
+        const stdout = error.stdout ? error.stdout.trim() : null;
+        const stderr = error.stderr ? error.stderr.trim() : null;
 
-        if (stderr) {
-            console.error('Docker stderr:', stderr);
-            res.status(400).json({ output: null, errors: stderr });
-            return;
-        }
-
-        res.status(200).json({ output: stdout || 'No output', errors: null });
-    } catch (err: any) {
-        console.error('Execution error:', err);
-        if (err.message.includes('OCI runtime create failed')) {
-            res.status(500).json({ message: 'Docker runtime error. Please check your container setup.', error: err.message });
-            return;
-        }
-        res.status(500).json({ message: 'Server error', error: err.message });
-    } finally {
-        try {
-            await fs.rm(tempDir, { recursive: true, force: true });
-        } catch (cleanupError) {
-            console.error('Cleanup error:', cleanupError);
-        }
+        res.status(500).json({
+            message: 'Server error',
+            stdout: stdout || null,
+            stderr: stderr || error.message,
+        });
     }
 }

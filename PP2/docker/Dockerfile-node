@@ -1,5 +1,0 @@
-FROM node:18-slim
-WORKDIR /usr/src/app
-COPY docker/scripts/execute.sh /usr/src/app/execute.sh
-RUN chmod +x /usr/src/app/execute.sh
-ENTRYPOINT ["/usr/src/app/execute.sh"]
