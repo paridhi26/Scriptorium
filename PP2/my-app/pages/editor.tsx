@@ -82,7 +82,6 @@ const Editor: React.FC = () => {
   )?.extension;
 
   return (
-    <Layout>
       <div className="w-full min-h-screen p-4">
         <h1 className="text-2xl font-semibold text-center mb-6">Scriptorium: Online Code Editor</h1>
 
@@ -152,7 +151,6 @@ const Editor: React.FC = () => {
           </button>
         </div>
       </div>
-    </Layout>
   );
 };
 
