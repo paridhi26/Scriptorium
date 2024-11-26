@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
+import { java } from '@codemirror/lang-java';
+import { cpp } from '@codemirror/lang-cpp';
+import { rust } from '@codemirror/lang-rust';
+import { php } from '@codemirror/lang-php';
 import Layout from '../components/Layout';
 
-// List of supported languages from your API
+// Supported languages
 const supportedLanguages = [
-  { value: 'javascript', label: 'JavaScript' },
-  { value: 'python', label: 'Python' },
-  { value: 'java', label: 'Java' },
-  { value: 'cpp', label: 'C++' },
-  { value: 'c', label: 'C' },
-  { value: 'ruby', label: 'Ruby' },
-  { value: 'go', label: 'Go' },
-  { value: 'php', label: 'PHP' },
-  { value: 'perl', label: 'Perl' },
-  { value: 'rust', label: 'Rust' },
+  { value: 'javascript', label: 'JavaScript', extension: javascript },
+  { value: 'python', label: 'Python', extension: python },
+  { value: 'java', label: 'Java', extension: java },
+  { value: 'cpp', label: 'C++', extension: cpp },
+  { value: 'c', label: 'C', extension: cpp }, // Using C++ extension for C
+  { value: 'rust', label: 'Rust', extension: rust },
+  { value: 'php', label: 'PHP', extension: php },
+  { value: 'ruby', label: 'Ruby', extension: null }, // No CodeMirror extension, fallback to plain text
+  { value: 'go', label: 'Go', extension: null }, // No CodeMirror extension, fallback to plain text
+  { value: 'perl', label: 'Perl', extension: null }, // No CodeMirror extension, fallback to plain text
 ];
 
 const Editor: React.FC = () => {
@@ -22,8 +29,8 @@ const Editor: React.FC = () => {
   const [error, setError] = useState('');
   const [input, setInput] = useState('');
 
-  const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setCode(e.target.value);
+  const handleCodeChange = (value: string) => {
+    setCode(value);
   };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -69,6 +76,11 @@ const Editor: React.FC = () => {
     // }
   };
 
+  // Get the CodeMirror extension for the selected language
+  const currentLanguageExtension = supportedLanguages.find(
+    (lang) => lang.value === language
+  )?.extension;
+
   return (
     <Layout>
       <div className="w-full min-h-screen p-4">
@@ -93,11 +105,12 @@ const Editor: React.FC = () => {
         <div className="flex flex-col md:flex-row gap-4 h-[calc(100vh-300px)] min-h-[400px]">
           {/* Code Editor */}
           <div className="flex-1">
-            <textarea
+            <CodeMirror
               value={code}
-              onChange={handleCodeChange}
-              rows={20}
-              className="w-full h-full p-4 bg-gray-800 text-white rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-auto"
+              extensions={currentLanguageExtension ? [currentLanguageExtension()] : []}
+              onChange={(value) => handleCodeChange(value)}
+              className="h-full"
+              theme="dark"
               placeholder={`Write your ${language} code here...`}
             />
           </div>
