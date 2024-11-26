@@ -1,14 +1,47 @@
-import { exec } from 'child_process';
-import { spawn } from 'child_process';
 import fs from 'fs/promises';
 import path from 'path';
-import { promisify } from 'util';
 import os from 'os';
+import { promisify } from 'util';
 import { v4 as uuidv4 } from 'uuid';
+import { exec } from 'child_process';
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '@lib/prisma'; // Assuming Prisma is set up to access the database
+import prisma from '@lib/prisma';
 
 const execAsync = promisify(exec);
+
+interface LanguageConfig {
+    fileExtension: string;
+    dockerImage: string;
+    command: string;
+}
+
+const supportedLanguages: Record<string, LanguageConfig> = {
+    python: {
+        fileExtension: '.py',
+        dockerImage: 'python-executor',
+        command: 'python3 /app/code.py',
+    },
+    javascript: {
+        fileExtension: '.js',
+        dockerImage: 'node-executor',
+        command: 'node /app/code.js',
+    },
+    java: {
+        fileExtension: '.java',
+        dockerImage: 'java-executor',
+        command: 'javac /app/Main.java && java -cp /app Main',
+    },
+    c: {
+        fileExtension: '.c',
+        dockerImage: 'c-executor',
+        command: 'gcc /app/code.c -o /app/code && /app/code',
+    },
+    cpp: {
+        fileExtension: '.cpp',
+        dockerImage: 'cpp-executor',
+        command: 'g++ /app/code.cpp -o /app/code && /app/code',
+    },
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     if (req.method !== 'POST') {
@@ -18,7 +51,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { templateId, input }: { templateId?: number; input?: string } = req.body;
 
-    // Validate input data
     if (!templateId) {
         res.status(400).json({ message: 'Template ID is required.' });
         return;
@@ -38,92 +70,52 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const { code, language } = template;
 
-        // Get the system's temporary directory
+        // Safely handle the language property
+        let languageName: string | null = null;
+        if (typeof language === 'string') {
+            languageName = (language as string).toLowerCase();
+        } else if (typeof language === 'object' && language?.name) {
+            languageName = language.name.toLowerCase();
+        }
+
+        if (!languageName || !supportedLanguages[languageName]) {
+            res.status(400).json({ message: `Unsupported language: ${JSON.stringify(language)}` });
+            return;
+        }
+
+        const { fileExtension, dockerImage, command } = supportedLanguages[languageName];
+
+        // Create a temporary file for the code
         const tempDir = os.tmpdir();
-        const fileId = uuidv4();
-        const filePath = path.join(tempDir, fileId);
+        const fileName = languageName === 'java' ? 'Main.java' : `code${fileExtension}`;
+        const filePath = path.join(tempDir, fileName);
 
-        let fileExtension: string | undefined;
-        let compileCommand: string | undefined;
-        let runCommand: string;
+        // Write the user-provided code to the temporary file
+        await fs.writeFile(filePath, code);
 
-        // Prepare commands for different languages
-        switch (language.toLowerCase()) {
-            case 'c':
-                fileExtension = '.c';
-                await fs.writeFile(filePath + fileExtension, code);
-                compileCommand = `gcc ${filePath}.c -o ${filePath}.out`;
-                runCommand = `${filePath}.out`;
-                break;
-            case 'c++':
-                fileExtension = '.cpp';
-                await fs.writeFile(filePath + fileExtension, code);
-                compileCommand = `g++ ${filePath}.cpp -o ${filePath}.out`;
-                runCommand = `${filePath}.out`;
-                break;
-            case 'java':
-                fileExtension = '.java';
-                const javaFilePath = path.join(tempDir, 'Main.java');
-                await fs.writeFile(javaFilePath, code);
-                compileCommand = `javac ${javaFilePath}`;
-                runCommand = `java -cp ${tempDir} Main`;
-                break;
-            case 'python':
-                fileExtension = '.py';
-                await fs.writeFile(filePath + fileExtension, code);
-                try {
-                    await execAsync('python3 --version');
-                    runCommand = `python3 ${filePath}.py`;
-                } catch {
-                    await execAsync('python --version');
-                    runCommand = `python ${filePath}.py`;
-                }
-                break;
-            case 'javascript':
-                fileExtension = '.js';
-                await fs.writeFile(filePath + fileExtension, code);
-                runCommand = `node ${filePath}.js`;
-                break;
-            default:
-                res.status(400).json({ message: 'Unsupported language.' });
-                return;
+        // Construct the Docker run command
+        const dockerCommand = input
+            ? `docker run --rm -v ${filePath}:/app/${fileName} ${dockerImage} sh -c "echo '${input}' | ${command}"`
+            : `docker run --rm -v ${filePath}:/app/${fileName} ${dockerImage} sh -c "${command}"`;
+
+        try {
+            const { stdout, stderr } = await execAsync(dockerCommand);
+
+            res.status(200).json({
+                output: stdout.trim(),
+                errors: stderr.trim() || null,
+            });
+        } catch (error: any) {
+            // Capture stdout and stderr even when there's an error
+            const stdout = error.stdout ? error.stdout.trim() : null;
+            const stderr = error.stderr ? error.stderr.trim() : null;
+
+            res.status(500).json({
+                message: 'Execution failed',
+                output: stdout || null,
+                errors: stderr || error.message,
+            });
         }
-
-        // Compile if needed
-        if (compileCommand) {
-            await execAsync(compileCommand);
-        }
-
-        // Run the program
-        const process = spawn(runCommand, { shell: true });
-
-        if (input) {
-            process.stdin.write(input);
-            process.stdin.end();
-        }
-
-        let output = '';
-        let error = '';
-
-        process.stdout.on('data', (data) => {
-            output += data.toString();
-        });
-
-        process.stderr.on('data', (data) => {
-            error += data.toString();
-        });
-
-        process.on('close', (code) => {
-            if (code !== 0) {
-                res.status(400).json({ output: null, errors: error || 'Execution failed.' });
-                return;
-            }
-            res.status(200).json({ output: output || 'No output', errors: null });
-        });
-
-        process.on('error', (err) => {
-            res.status(500).json({ output: null, errors: 'Process execution error.' });
-        });
     } catch (err: any) {
         console.error('Execution error:', err);
         res.status(500).json({ message: 'Server error', error: err.message });

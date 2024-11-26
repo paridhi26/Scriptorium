@@ -1,0 +1,4 @@
+# Dockerfile.python
+FROM python:3.10-slim
+WORKDIR /app
+CMD ["python3", "code.py"]
