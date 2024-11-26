@@ -40,6 +40,31 @@ const supportedLanguages: Record<string, LanguageConfig> = {
         dockerImage: 'cpp-executor',
         command: 'g++ /app/code.cpp -o /app/code && /app/code',
     },
+    ruby: {
+        fileExtension: '.rb',
+        dockerImage: 'ruby-executor',
+        command: 'ruby /app/code.rb',
+    },
+    go: {
+        fileExtension: '.go',
+        dockerImage: 'go-executor',
+        command: 'go run /app/code.go',
+    },
+    php: {
+        fileExtension: '.php',
+        dockerImage: 'php-executor',
+        command: 'php /app/code.php',
+    },
+    perl: {
+        fileExtension: '.pl',
+        dockerImage: 'perl-executor',
+        command: 'perl /app/code.pl',
+    },
+    rust: {
+        fileExtension: '.rs',
+        dockerImage: 'rust-executor',
+        command: 'rustc /app/code.rs && /app/code',
+    },
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {

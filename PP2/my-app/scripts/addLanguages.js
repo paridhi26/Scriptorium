@@ -7,6 +7,11 @@ const languages = [
     { id: 3, name: 'Java' },
     { id: 4, name: 'C' },
     { id: 5, name: 'C++' },
+    { id: 6, name: 'Ruby' },
+    { id: 7, name: 'Go' },
+    { id: 8, name: 'PHP' },
+    { id: 9, name: 'Rust' },
+    { id: 10, name: 'Perl' },
 ];
 
 async function addProgrammingLanguages() {

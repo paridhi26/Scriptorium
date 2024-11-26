@@ -1,0 +1,4 @@
+# Dockerfile.rust
+FROM rust:latest
+WORKDIR /app
+CMD ["sh", "-c", "rustc code.rs && ./code"]

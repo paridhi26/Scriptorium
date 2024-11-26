@@ -58,7 +58,7 @@ const Blogs = () => {
   // Handle login
   const handleLogin = async () => {
     try {
-      const response = await axios.post("/api/auth/login", { email, password });
+      const response = await axios.post<{ token: string }>("/api/auth/login", { email, password });
       const token = response.data.token;
 
       // Store the token for subsequent requests
