@@ -13,7 +13,7 @@ const Login = () => {
     e.preventDefault();
     setError("");
 
-    const endpoint = isLogin ? "/api/auth/login.ts" : "/api/auth/signup.ts";
+    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
     try {
       const response = await fetch(endpoint, {
         method: "POST",
@@ -32,7 +32,11 @@ const Login = () => {
       localStorage.setItem("authToken", authToken);
       router.push("/"); // Redirect to the homepage or user dashboard
     } catch (err) {
-      setError(err.message || "An unexpected error occurred.");
+      if (err instanceof Error) {
+        setError(err.message || "An unexpected error occurred.");
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   };
 
