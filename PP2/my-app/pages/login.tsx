@@ -1,20 +1,23 @@
-// pages/login.tsx
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
+
     try {
+      // Step 1: Authenticate and get authToken + userId
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -23,20 +26,37 @@ const Login = () => {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const { message } = await response.json();
-        throw new Error(message || "Something went wrong");
+        throw new Error(data.message || "Something went wrong");
       }
 
-      const { authToken } = await response.json();
-      localStorage.setItem("authToken", authToken);
-      router.push("/"); // Redirect to the homepage or user dashboard
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message || "An unexpected error occurred.");
-      } else {
-        setError("An unexpected error occurred.");
+      const { token: authToken, userId } = data;
+
+      console.log("Auth Token:", authToken, "User ID:", userId);
+
+      // Step 2: Fetch user details using userId
+      const userResponse = await fetch(`/api/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      const user = await userResponse.json();
+
+      if (!userResponse.ok) {
+        throw new Error(user.message || "Failed to fetch user details");
       }
+
+      console.log("User Info:", user);
+
+      // Step 3: Save to localStorage and update context
+      login(authToken, userId, user);
+      router.push(`/${userId}`);
+    } catch (err) {
+      console.error("Error during login:", err);
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     }
   };
 
@@ -85,18 +105,6 @@ const Login = () => {
             {isLogin ? "Login" : "Sign Up"}
           </button>
         </form>
-
-        <div className="mt-4 text-center">
-          <p className="text-sm">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-blue-600 hover:underline"
-            >
-              {isLogin ? "Sign Up" : "Login"}
-            </button>
-          </p>
-        </div>
       </div>
     </div>
   );

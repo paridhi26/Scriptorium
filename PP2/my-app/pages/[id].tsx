@@ -4,9 +4,11 @@ import axios from "axios";
 
 interface UserDashboard {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  createdProjects: { id: string; title: string }[];
+  phone?: string;
+  avatar?: string;
 }
 
 const UserDashboard = () => {
@@ -77,19 +79,24 @@ const UserDashboard = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Welcome, {userData?.name}</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Welcome, {userData?.firstName} {userData?.lastName}
+      </h1>
       <p className="text-gray-700 mb-4">Email: {userData?.email}</p>
-      <h2 className="text-2xl font-semibold mb-4">Your Projects</h2>
-      <ul className="space-y-4">
-        {userData?.createdProjects.map((project) => (
-          <li
-            key={project.id}
-            className="p-4 border rounded-lg shadow-md bg-white"
-          >
-            <h3 className="text-lg font-semibold">{project.title}</h3>
-          </li>
-        ))}
-      </ul>
+      {userData?.phone && (
+        <p className="text-gray-700 mb-4">Phone: {userData.phone}</p>
+      )}
+      {userData?.avatar && (
+        <div className="mb-4">
+          <p className="text-gray-700">Avatar:</p>
+          <img
+            src={userData.avatar}
+            alt={`${userData.firstName}'s Avatar`}
+            className="rounded-full w-32 h-32"
+          />
+        </div>
+      )}
+      <p className="text-gray-500">This is your dashboard.</p>
     </div>
   );
 };

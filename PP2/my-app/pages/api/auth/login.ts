@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import prisma from '../../../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const SECRET_KEY = process.env.JWT_SECRET as string; // chatgpt
+const SECRET_KEY = process.env.JWT_SECRET as string;
 
 export default async function login(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     if (req.method !== 'POST') {
@@ -45,8 +45,8 @@ export default async function login(req: NextApiRequest, res: NextApiResponse): 
             { expiresIn: '1h' } // Token expiration time
         );
 
-        // Return the token
-        res.status(200).json({ token });
+        // Return the token and userId
+        res.status(200).json({ token, userId: user.id });
     } catch (error) {
         console.error('Login error:', error); // Log the error for debugging
         res.status(500).json({ error: 'An error occurred during login.' });
