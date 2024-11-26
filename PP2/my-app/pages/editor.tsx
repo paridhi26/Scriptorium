@@ -1,12 +1,26 @@
 import React, { useState } from 'react';
-// import { useSession } from 'next-auth/react';
 import Layout from '../components/Layout';
+
+// List of supported languages from your API
+const supportedLanguages = [
+  { value: 'javascript', label: 'JavaScript' },
+  { value: 'python', label: 'Python' },
+  { value: 'java', label: 'Java' },
+  { value: 'cpp', label: 'C++' },
+  { value: 'c', label: 'C' },
+  { value: 'ruby', label: 'Ruby' },
+  { value: 'go', label: 'Go' },
+  { value: 'php', label: 'PHP' },
+  { value: 'perl', label: 'Perl' },
+  { value: 'rust', label: 'Rust' },
+];
 
 const Editor: React.FC = () => {
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
   const [language, setLanguage] = useState('javascript');
-  // const { data: session } = useSession();
+  const [error, setError] = useState('');
+  const [input, setInput] = useState('');
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCode(e.target.value);
@@ -16,9 +30,34 @@ const Editor: React.FC = () => {
     setLanguage(e.target.value);
   };
 
-  const handleExecuteCode = () => {
-    // Simulate running the code (for now)
-    setOutput(`Executed ${language} code:\n${code}`);
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+  };
+
+  const handleExecuteCode = async () => {
+    setError('');
+    setOutput('Running...');
+
+    try {
+      const response = await fetch('/api/execute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ language, code, input }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.stderr || data.message || 'Execution failed');
+      }
+
+      setOutput(data.stdout || 'No output');
+    } catch (err: any) {
+      setOutput('');
+      setError(err.message || 'An error occurred while executing the code.');
+    }
   };
 
   const handleSaveTemplate = () => {
@@ -42,15 +81,16 @@ const Editor: React.FC = () => {
             onChange={handleLanguageChange}
             className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="javascript">JavaScript</option>
-            <option value="python">Python</option>
-            <option value="java">Java</option>
-            <option value="cpp">C++</option>
+            {supportedLanguages.map((lang) => (
+              <option key={lang.value} value={lang.value}>
+                {lang.label}
+              </option>
+            ))}
           </select>
         </div>
 
         {/* Code Editor and Output Section */}
-        <div className="flex flex-col md:flex-row gap-4 h-[calc(100vh-200px)] min-h-[400px]">
+        <div className="flex flex-col md:flex-row gap-4 h-[calc(100vh-300px)] min-h-[400px]">
           {/* Code Editor */}
           <div className="flex-1">
             <textarea
@@ -62,10 +102,22 @@ const Editor: React.FC = () => {
             />
           </div>
 
+          {/* Input Section */}
+          <div className="flex-1">
+            <textarea
+              value={input}
+              onChange={handleInputChange}
+              rows={5}
+              className="w-full p-4 bg-gray-100 text-black rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-auto"
+              placeholder={`Optional input for your ${language} program...`}
+            />
+          </div>
+
           {/* Output Section */}
           <div className="flex-1 h-full">
             <div className="h-full p-6 bg-gray-700 text-white rounded-md overflow-auto">
               <h3 className="font-semibold text-xl mb-2">Output:</h3>
+              {error && <p className="text-red-400">{error}</p>}
               <pre className="whitespace-pre-wrap overflow-auto h-[calc(100%-2rem)]">{output}</pre>
             </div>
           </div>
