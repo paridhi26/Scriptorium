@@ -6,7 +6,6 @@ import { java } from '@codemirror/lang-java';
 import { cpp } from '@codemirror/lang-cpp';
 import { rust } from '@codemirror/lang-rust';
 import { php } from '@codemirror/lang-php';
-import Layout from '../components/Layout';
 
 // Supported languages
 const supportedLanguages = [
@@ -68,12 +67,8 @@ const Editor: React.FC = () => {
   };
 
   const handleSaveTemplate = () => {
-    // if (session) {
-    //   // Implement save logic here
-    //   alert("Template saved successfully!");
-    // } else {
-    //   alert("Please log in to save templates.");
-    // }
+    // Implement save logic here
+    alert("Template saved successfully!");
   };
 
   // Get the CodeMirror extension for the selected language
@@ -82,76 +77,73 @@ const Editor: React.FC = () => {
   )?.extension;
 
   return (
-      <div className="w-full min-h-screen p-4">
-        <h1 className="text-2xl font-semibold text-center mb-6">Scriptorium: Online Code Editor</h1>
+    <div className="container mx-auto p-4 max-w-6xl">
+      <h1 className="text-3xl font-bold text-center mb-8">Scriptorium: Online Code Editor</h1>
 
-        {/* Language Selector */}
-        <div className="mb-4">
-          <select
-            value={language}
-            onChange={handleLanguageChange}
-            className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            {supportedLanguages.map((lang) => (
-              <option key={lang.value} value={lang.value}>
-                {lang.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Code Editor and Output Section */}
-        <div className="flex flex-col md:flex-row gap-4 h-[calc(100vh-300px)] min-h-[400px]">
-          {/* Code Editor */}
-          <div className="flex-1">
-            <CodeMirror
-              value={code}
-              extensions={currentLanguageExtension ? [currentLanguageExtension()] : []}
-              onChange={(value) => handleCodeChange(value)}
-              className="h-full"
-              theme="dark"
-              placeholder={`Write your ${language} code here...`}
-            />
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="p-6">
+          <div className="flex flex-wrap items-center justify-between mb-4">
+            <select
+              value={language}
+              onChange={handleLanguageChange}
+              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {supportedLanguages.map((lang) => (
+                <option key={lang.value} value={lang.value}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+            <div className="flex space-x-2 mt-2 sm:mt-0">
+              <button
+                onClick={handleExecuteCode}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
+              >
+                Execute Code
+              </button>
+              <button
+                onClick={handleSaveTemplate}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors"
+              >
+                Save as Template
+              </button>
+            </div>
           </div>
 
-          {/* Input Section */}
-          <div className="flex-1">
-            <textarea
-              value={input}
-              onChange={handleInputChange}
-              rows={5}
-              className="w-full p-4 bg-gray-100 text-black rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-auto"
-              placeholder={`Optional input for your ${language} program...`}
-            />
-          </div>
-
-          {/* Output Section */}
-          <div className="flex-1 h-full">
-            <div className="h-full p-6 bg-gray-700 text-white rounded-md overflow-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="border rounded-md overflow-hidden">
+                <CodeMirror
+                  value={code}
+                  extensions={currentLanguageExtension ? [currentLanguageExtension()] : []}
+                  onChange={(value) => handleCodeChange(value)}
+                  className="h-[400px]"
+                  theme="dark"
+                  placeholder={`Write your ${language} code here...`}
+                />
+              </div>
+              <textarea
+                value={input}
+                onChange={handleInputChange}
+                rows={5}
+                className="w-full p-4 bg-gray-100 text-black rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                placeholder={`Optional input for your ${language} program...`}
+              />
+            </div>
+            <div className="bg-gray-100 rounded-md p-4">
               <h3 className="font-semibold text-xl mb-2">Output:</h3>
-              {error && <p className="text-red-400">{error}</p>}
-              <pre className="whitespace-pre-wrap overflow-auto h-[calc(100%-2rem)]">{output}</pre>
+              <div className="h-[400px] bg-white border border-gray-300 rounded-md p-4 overflow-auto">
+                {error && <p className="text-red-600 mb-2">{error}</p>}
+                <pre className="whitespace-pre-wrap">{output}</pre>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Buttons */}
-        <div className="flex justify-between mt-4">
-          <button
-            onClick={handleExecuteCode}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-          >
-            Execute Code
-          </button>
-          <button
-            onClick={handleSaveTemplate}
-            className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-          >
-            Save as Template
-          </button>
-        </div>
       </div>
+    </div>
   );
 };
 
 export default Editor;
+
+
