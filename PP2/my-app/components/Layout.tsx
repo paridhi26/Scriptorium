@@ -1,14 +1,41 @@
 // components/Layout.tsx
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
-
-
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+
+    if (authToken) {
+      setLoggedIn(true);
+
+      // Fetch or decode user ID (example assumes fetching it)
+      const fetchUser = async () => {
+        try {
+          const response = await fetch("/api/auth/user", {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+          const data = await response.json();
+          setUserId(data.userId); // Adjust based on your API response
+        } catch (error) {
+          console.error("Failed to fetch user data:", error);
+          setLoggedIn(false);
+        }
+      };
+
+      fetchUser();
+    }
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar */}
@@ -39,24 +66,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     Blogs
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href={loggedIn && userId ? `/${userId}` : "/login"}
+                    className="hover:underline"
+                  >
+                    My Dashboard
+                  </Link>
+                </li>
               </ul>
             </nav>
-          </div>
-
-          {/* Right side (Search Bar + Profile Icon) */}
-          <div className="flex items-center space-x-4">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="px-4 py-2 rounded-full text-black"
-            />
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex justify-center items-center">
-              <img
-                src="/path-to-your-profile-icon.png" // replace with the actual path to your profile icon
-                alt="Profile"
-                className="w-6 h-6 rounded-full"
-              />
-            </div>
           </div>
         </div>
       </header>
