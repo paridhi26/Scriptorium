@@ -23,9 +23,9 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const response = await fetch("/api/users/getAnyTemp/query");
+        const response = await fetch("/api/visitors/allTemplates");
         const data = await response.json();
-        setTemplates(data.templates); // Adjust this based on the actual API response structure
+        setTemplates(data.codeTemplates); // Adjust this based on the actual API response structure
       } catch (error) {
         console.error("Error fetching templates:", error);
       }
@@ -38,9 +38,9 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
-        const response = await fetch("/api/blogPosts"); // Replace with the actual API endpoint for blog posts
+        const response = await fetch("/api/visitors/blogPostsSortedPage"); // Replace with the actual API endpoint for blog posts
         const data = await response.json();
-        setBlogPosts(data.posts); // Adjust this based on the actual API response structure
+        setBlogPosts(data.blogPosts); // Adjust this based on the actual API response structure
       } catch (error) {
         console.error("Error fetching blog posts:", error);
       }
