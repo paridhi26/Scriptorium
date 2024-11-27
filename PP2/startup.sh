@@ -55,22 +55,11 @@ check_command "javac"
 check_command "node"
 echo "All required compilers/interpreters are installed."
 
-# Step 7: Return to the PP1 directory to run scripts
+# Step 7: Build Docker images
+echo "Building Docker images..."
+./build-images.sh
+
+# Step 8: Return to the PP2 directory to run scripts
 cd ..
-
-# Step 8: Clear the database
-echo "Clearing the database..."
-node my-app/scripts/clearDatabase.js
-echo "Database cleared."
-
-# Step 9: Add programming languages
-echo "Adding programming languages..."
-node my-app/scripts/addLanguages.js
-echo "Programming languages added."
-
-# Step 10: Create an admin user
-echo "Creating admin user..."
-node my-app/scripts/createAdmin.js
-echo "Admin user created."
 
 echo "Environment setup completed successfully."

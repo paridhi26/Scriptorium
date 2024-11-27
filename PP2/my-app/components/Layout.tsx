@@ -7,7 +7,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { loggedIn, id, logout } = useAuth();
+  const { loggedIn, id, user, logout } = useAuth();
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -48,6 +48,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </Link>
                   )}
                 </li>
+                {loggedIn && user?.role === "ADMIN" && (
+                  <li>
+                    <Link href="/admin" className="hover:underline">
+                      Admin
+                    </Link>
+                  </li>
+                )}
                 {loggedIn && (
                   <li>
                     <button onClick={logout} className="hover:underline">
