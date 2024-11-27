@@ -15,30 +15,50 @@ const TemplatesPage: React.FC = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const pageSize = 10; // Number of templates per page
+
+  const fetchTemplates = async (page: number) => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await axios.get('/api/visitors/allTemplates', {
+        params: { page, pageSize },
+      });
+
+      const { codeTemplates, totalPages } = response.data;
+      setTemplates(codeTemplates);
+      setTotalPages(totalPages);
+    } catch (err) {
+      setError('Failed to fetch templates');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTemplates = async () => {
-      try {
-        const response = await axios.get('/api/visitors/allTemplates'); // Adjust the endpoint if necessary
-        setTemplates(response.data.codeTemplates);
-      } catch (err) {
-        setError('Failed to fetch templates');
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchTemplates(currentPage);
+  }, [currentPage]);
 
-    fetchTemplates();
-  }, []);
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   if (loading) return <p>Loading templates...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '30px', fontSize: '2.5rem' }}>
-        Code Templates
-      </h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Code Templates</h1>
       <div
         style={{
           display: 'grid',
@@ -116,6 +136,43 @@ const TemplatesPage: React.FC = () => {
             </div>
           </Link>
         ))}
+      </div>
+
+      {/* Pagination Controls */}
+      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          style={{
+            padding: '10px 20px',
+            marginRight: '10px',
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+          }}
+        >
+          Previous
+        </button>
+        <span style={{ margin: '0 10px', fontWeight: 'bold' }}>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          style={{
+            padding: '10px 20px',
+            marginLeft: '10px',
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+          }}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
