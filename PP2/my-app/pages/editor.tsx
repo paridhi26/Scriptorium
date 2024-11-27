@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
@@ -26,12 +26,17 @@ const Editor: React.FC = () => {
   const [language, setLanguage] = useState('javascript');
   const [error, setError] = useState('');
   const [input, setInput] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // Authentication check
+  const [loggedIn, setLoggedIn] = useState<boolean>(false); // Authentication check
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [tags, setTags] = useState<string>('');
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+
+  // Check if user is logged in on component mount
+  useEffect(() => {
+    const authToken = localStorage.getItem('authToken');
+    setLoggedIn(!!authToken);
+  }, []);
 
   const handleCodeChange = (value: string) => {
     setCode(value);
@@ -72,14 +77,17 @@ const Editor: React.FC = () => {
     }
   };
 
-  // ------------------------------------ Handle Save Template Feature ---------------------------------------
-  const handleSaveClick = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
+  const handleSaveClick = () => {
     if (!loggedIn) {
       alert('Login first to use this feature.');
       return;
     }
+
+    setShowPopup(true); // Show the save template popup
+  };
+
+  const handleSaveTemplate = async (e: React.FormEvent) => {
+    e.preventDefault();
   
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
@@ -87,14 +95,35 @@ const Editor: React.FC = () => {
       return;
     }
   
-    const tagArray = tags.split(',').map(tag => tag.trim()); // Convert comma-separated tags to an array
+    const tagArray = tags.split(',').map((tag) => tag.trim()); // Convert comma-separated tags to an array
+  
+    // Map the language to its corresponding database ID
+    const languageIdMapping: Record<string, number> = {
+      javascript: 1,
+      python: 2,
+      java: 3,
+      cpp: 4,
+      c: 5,
+      rust: 6,
+      php: 7,
+      ruby: 8,
+      go: 9,
+      perl: 10,
+    };
+  
+    const languageId = languageIdMapping[language];
+  
+    if (!languageId) {
+      alert(`Unsupported language: ${language}`);
+      return;
+    }
   
     const payload = {
       title,
       description,
       code,
-      languageId: supportedLanguages.find((lang) => lang.value === language)?.value ?? 1, // Assign the correct languageId
-      tags: tagArray,
+      languageId, // Use the mapped integer ID
+      tags: tagArray.length > 0 ? tagArray : null, // Send null if no tags provided
     };
   
     try {
@@ -102,7 +131,7 @@ const Editor: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`, // Add token here
+          Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify(payload),
       });
@@ -119,6 +148,7 @@ const Editor: React.FC = () => {
       alert(error.message || 'An error occurred while saving the template.');
     }
   };
+  
 
   const currentLanguageExtension = supportedLanguages.find(
     (lang) => lang.value === language
@@ -223,7 +253,6 @@ const Editor: React.FC = () => {
                   id="tags"
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
-                  required
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
               </div>
