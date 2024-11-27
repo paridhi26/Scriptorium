@@ -40,3 +40,14 @@ const tempDownvote = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default tempDownvote;
+
+
+
+
+
+
+
+
+
+
+

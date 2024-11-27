@@ -40,3 +40,20 @@ const blogDownvote = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default blogDownvote;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

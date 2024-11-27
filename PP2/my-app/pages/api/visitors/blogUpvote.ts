@@ -40,3 +40,21 @@ const blogUpvote = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default blogUpvote;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
