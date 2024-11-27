@@ -74,17 +74,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return;
     }
 
-    const { templateId, input }: { templateId?: number; input?: string } = req.body;
+    const { templateId, input }: { templateId?: number | string; input?: string } = req.body;
 
     if (!templateId) {
         res.status(400).json({ message: 'Template ID is required.' });
         return;
     }
 
+    // Ensure templateId is an integer (parse it if it's a string)
+    const parsedTemplateId = typeof templateId === 'string' ? parseInt(templateId, 10) : templateId;
+
+    if (isNaN(parsedTemplateId)) {
+        res.status(400).json({ message: 'Invalid Template ID.' });
+        return;
+    }
+
     try {
-        // Fetch the code template from the database
+        // Fetch the code template from the database using the parsed integer ID
         const template = await prisma.codeTemplate.findUnique({
-            where: { id: templateId },
+            where: { id: parsedTemplateId },
             select: { code: true, language: true },
         });
 
