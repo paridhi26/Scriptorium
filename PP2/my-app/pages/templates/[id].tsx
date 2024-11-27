@@ -37,8 +37,6 @@ const TemplateDetails: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [input, setInput] = useState<string>('');
   const [output, setOutput] = useState<string>('');
-  const [upvotes, setUpvotes] = useState<number>(0);
-  const [downvotes, setDownvotes] = useState<number>(0);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
@@ -49,8 +47,6 @@ const TemplateDetails: React.FC = () => {
         const response = await fetch(`/api/visitors/mentionedCodeTemplates?id=${id}`);
         const data = await response.json();
         setTemplate(data);
-        setUpvotes(data.upvotes || 0);
-        setDownvotes(data.downvotes || 0);
       } catch (err) {
         setError('Failed to load template.');
       } finally {
@@ -103,24 +99,6 @@ const TemplateDetails: React.FC = () => {
     }
     console.log('Forking template:', id);
     // Add logic to fork the template, e.g., redirecting to a new creation page with pre-filled data.
-  };
-
-  const handleUpvote = async () => {
-    if (!loggedIn) {
-      alert('Login first to use this feature.');
-      return;
-    }
-    setUpvotes((prev) => prev + 1);
-    // Implement backend integration for upvoting if needed
-  };
-
-  const handleDownvote = async () => {
-    if (!loggedIn) {
-      alert('Login first to use this feature.');
-      return;
-    }
-    setDownvotes((prev) => prev + 1);
-    // Implement backend integration for downvoting if needed
   };
 
   if (loading) return <p>Loading template...</p>;
@@ -177,20 +155,6 @@ const TemplateDetails: React.FC = () => {
               <strong>Output:</strong>
               <pre>{output || 'No output yet.'}</pre>
             </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={handleUpvote}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-            >
-              Upvote ({upvotes})
-            </button>
-            <button
-              onClick={handleDownvote}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-            >
-              Downvote ({downvotes})
-            </button>
           </div>
 
           {/* Related Blog Posts Section */}
