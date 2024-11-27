@@ -18,9 +18,17 @@ interface BlogPost {
   hidden: boolean;
 }
 
+interface Template {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+}
+
 const UserDashboard = () => {
   const [userData, setUserData] = useState<UserDashboard | null>(null);
   const [userPosts, setUserPosts] = useState<BlogPost[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
@@ -28,7 +36,7 @@ const UserDashboard = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  // Fetch user data and blog posts
+  // Fetch user data, blog posts, and templates
   useEffect(() => {
     const fetchData = async () => {
       if (!id || typeof id !== "string") return;
@@ -53,6 +61,12 @@ const UserDashboard = () => {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         setUserPosts(postsResponse.data);
+
+        // Fetch user's templates
+        const templatesResponse = await axios.get<Template[]>(`/api/users/getMyTemp`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        setTemplates(templatesResponse.data);
       } catch (err: any) {
         console.error("Error fetching data:", err);
         setError(err.response?.data?.message || "Failed to fetch user data");
@@ -102,6 +116,29 @@ const UserDashboard = () => {
     }
   };
 
+  const handleDeleteTemplate = async (templateId: string) => {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      setError("You must be logged in to delete a template.");
+      return;
+    }
+
+    try {
+      await axios.delete(`api/users/editTemp?id=${templateId}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      setTemplates(templates.filter((template) => template.id !== templateId));
+    } catch (err: any) {
+      console.error("Error deleting template:", err);
+      setError(err.response?.data?.message || "Failed to delete template");
+    }
+  };
+
+  const handleEditTemplate = (templateId: string) => {
+    // Redirect or open modal to edit the template
+    router.push(`api/users/editTemp?id=${templateId}`);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -135,6 +172,8 @@ const UserDashboard = () => {
           Manage your profile details below to keep your information up-to-date.
         </p>
       </div>
+
+      {/* Profile Details Section */}
       {!editMode ? (
         <>
           <div className="flex justify-center items-center mb-8">
@@ -216,19 +255,19 @@ const UserDashboard = () => {
             <input
               type="file"
               onChange={handleFileChange}
-              className="block w-full p-2 border rounded"
+              className="block w-full text-gray-700 p-2"
             />
           </div>
-          <div className="flex space-x-4 mt-6">
+          <div className="flex justify-between items-center mt-6">
             <button
               onClick={handleUpdate}
-              className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700"
+              className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700"
             >
               Save Changes
             </button>
             <button
               onClick={() => setEditMode(false)}
-              className="bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700"
+              className="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600"
             >
               Cancel
             </button>
@@ -236,32 +275,53 @@ const UserDashboard = () => {
         </div>
       )}
 
-      <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4">Your Blog Posts</h2>
+      {/* Your Blog Posts Section */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-4">Your Blog Posts</h2>
         {userPosts.length > 0 ? (
-          <ul className="space-y-4">
-            {userPosts.map((post) => (
-              <li
-                key={post.id}
-                className={`p-4 border rounded-lg shadow-sm ${
-                  post.hidden ? "bg-red-100" : "bg-white"
-                }`}
-              >
-                <h3 className="text-xl font-bold">{post.title}</h3>
-                <p className="text-gray-700">{post.description}</p>
-                {post.hidden && (
-                  <p className="text-red-500 font-semibold mt-2">
-                    This post is hidden.
-                  </p>
-                )}
-              </li>
-            ))}
-          </ul>
+          userPosts.map((post) => (
+            <div key={post.id} className="mb-4 p-4 border rounded-md bg-white shadow-sm">
+              <h3 className="text-xl font-semibold">{post.title}</h3>
+              <p>{post.description}</p>
+              <div className="flex justify-end space-x-4">
+                <button className="text-blue-600 hover:text-blue-700">Edit</button>
+                <button className="text-red-600 hover:text-red-700">Delete</button>
+              </div>
+            </div>
+          ))
         ) : (
-          <p className="text-gray-500">You have no blog posts yet.</p>
+          <p>No blog posts found.</p>
         )}
       </div>
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+
+      {/* Your Templates Section */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-4">Your Templates</h2>
+        {templates.length > 0 ? (
+          templates.map((template) => (
+            <div key={template.id} className="mb-4 p-4 border rounded-md bg-white shadow-sm">
+              <h3 className="text-xl font-semibold">{template.title}</h3>
+              <p>{template.description}</p>
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => handleEditTemplate(template.id)}
+                  className="text-blue-600 hover:text-blue-700"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteTemplate(template.id)}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No templates found.</p>
+        )}
+      </div>
     </div>
   );
 };
