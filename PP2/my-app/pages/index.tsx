@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../components/Layout";
 import Link from "next/link";
-import { CodeIcon, BookOpenIcon, SearchIcon } from "@heroicons/react/outline";
+import { CodeIcon, BookOpenIcon } from "@heroicons/react/outline";
 
 interface Template {
   id: string;
@@ -22,7 +21,6 @@ interface BlogPost {
 const Home: React.FC = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -49,19 +47,76 @@ const Home: React.FC = () => {
     fetchBlogPosts();
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Searching for:", searchQuery);
+  const handleUpvoteTemplate = async (id: string) => {
+    try {
+      await fetch(`/api/visitors/tempUpvote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      setTemplates((prev) =>
+        prev.map((template) =>
+          template.id === id
+            ? { ...template, upvotes: template.upvotes + 1 }
+            : template
+        )
+      );
+    } catch (error) {
+      console.error("Error upvoting template:", error);
+    }
   };
 
-  const sortBlogPostsByUpvotes = () => {
-    const sorted = [...blogPosts].sort((a, b) => b.upvotes - a.upvotes);
-    setBlogPosts(sorted);
+  const handleDownvoteTemplate = async (id: string) => {
+    try {
+      await fetch(`/api/visitors/tempDownvote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      setTemplates((prev) =>
+        prev.map((template) =>
+          template.id === id
+            ? { ...template, downvotes: template.downvotes + 1 }
+            : template
+        )
+      );
+    } catch (error) {
+      console.error("Error downvoting template:", error);
+    }
   };
 
-  const sortBlogPostsByDownvotes = () => {
-    const sorted = [...blogPosts].sort((a, b) => b.downvotes - a.downvotes);
-    setBlogPosts(sorted);
+  const handleUpvoteBlog = async (id: string) => {
+    try {
+      await fetch(`/api/visitors/blogUpvote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      setBlogPosts((prev) =>
+        prev.map((post) =>
+          post.id === id ? { ...post, upvotes: post.upvotes + 1 } : post
+        )
+      );
+    } catch (error) {
+      console.error("Error upvoting blog:", error);
+    }
+  };
+
+  const handleDownvoteBlog = async (id: string) => {
+    try {
+      await fetch(`/api/visitors/blogDownvote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      setBlogPosts((prev) =>
+        prev.map((post) =>
+          post.id === id ? { ...post, downvotes: post.downvotes + 1 } : post
+        )
+      );
+    } catch (error) {
+      console.error("Error downvoting blog:", error);
+    }
   };
 
   const sortTemplatesByUpvotes = () => {
@@ -72,6 +127,16 @@ const Home: React.FC = () => {
   const sortTemplatesByDownvotes = () => {
     const sorted = [...templates].sort((a, b) => b.downvotes - a.downvotes);
     setTemplates(sorted);
+  };
+
+  const sortBlogPostsByUpvotes = () => {
+    const sorted = [...blogPosts].sort((a, b) => b.upvotes - a.upvotes);
+    setBlogPosts(sorted);
+  };
+
+  const sortBlogPostsByDownvotes = () => {
+    const sorted = [...blogPosts].sort((a, b) => b.downvotes - a.downvotes);
+    setBlogPosts(sorted);
   };
 
   return (
@@ -85,38 +150,6 @@ const Home: React.FC = () => {
             Write, execute, and share code in multiple programming languages.
             Join our community of developers today!
           </p>
-          <form onSubmit={handleSearch} className="mb-8">
-            <div className="flex justify-center">
-              <input
-                type="text"
-                placeholder="Search templates, blog posts, or code snippets..."
-                className="w-full max-w-md px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-300 text-gray-900 border-2 border-blue-500 border-r-0"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded-r-lg transition duration-300 text-white"
-              >
-                <SearchIcon className="h-5 w-5" />
-              </button>
-            </div>
-          </form>
-          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link
-              href="/editor"
-              className="bg-blue-500 text-white hover:bg-blue-600 font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center"
-            >
-              <CodeIcon className="h-5 w-5 mr-2" />
-              Launch Online Editor
-            </Link>
-            <Link
-              href="/login"
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300"
-            >
-              Sign Up Today
-            </Link>
-          </div>
         </div>
       </div>
 
@@ -143,32 +176,37 @@ const Home: React.FC = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {templates.length > 0 ? (
-              templates.map((template) => (
-                <div
-                  key={template.id}
-                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300"
-                >
-                  <h3 className="font-semibold text-xl text-gray-800 mb-2">
-                    {template.name}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{template.description}</p>
-                  <p className="text-sm text-gray-500">
-                    Upvotes: {template.upvotes} | Downvotes: {template.downvotes}
-                  </p>
-                  <Link
-                    href={`/templates/${template.id}`}
-                    className="text-blue-500 hover:text-blue-600 font-semibold"
+            {templates.map((template) => (
+              <div
+                key={template.id}
+                className="bg-white p-6 rounded-lg shadow-md"
+              >
+                <h3 className="text-xl font-semibold text-gray-800">
+                  {template.name}
+                </h3>
+                <p className="text-gray-600">{template.description}</p>
+                <p className="text-gray-500">
+                  Upvotes: {template.upvotes} | Downvotes: {template.downvotes}
+                </p>
+                <div className="flex space-x-4 mt-2">
+                  <button
+                    onClick={() => handleUpvoteTemplate(template.id)}
+                    className="bg-green-500 text-white px-4 py-2 rounded"
                   >
-                    Use Template →
-                  </Link>
+                    Upvote
+                  </button>
+                  <button
+                    onClick={() => handleDownvoteTemplate(template.id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                  >
+                    Downvote
+                  </button>
                 </div>
-              ))
-            ) : (
-              <p className="text-gray-600 col-span-3 text-center">
-                Loading templates...
-              </p>
-            )}
+                <Link href={`/templates/${template.id}`} className="block mt-4 text-blue-500">
+                  Use Template →
+                </Link>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -194,32 +232,37 @@ const Home: React.FC = () => {
             </div>
           </div>
           <div className="space-y-8">
-            {blogPosts.length > 0 ? (
-              blogPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300"
-                >
-                  <h3 className="font-semibold text-xl text-gray-800 mb-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    {post.content.slice(0, 150)}...
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Upvotes: {post.upvotes} | Downvotes: {post.downvotes}
-                  </p>
-                  <Link
-                    href={`/blog/${post.id}`}
-                    className="text-green-500 hover:text-green-600 font-semibold"
+            {blogPosts.map((post) => (
+              <div
+                key={post.id}
+                className="bg-white p-6 rounded-lg shadow-md"
+              >
+                <h3 className="text-xl font-semibold text-gray-800">
+                  {post.title}
+                </h3>
+                <p className="text-gray-600">{post.content.slice(0, 150)}...</p>
+                <p className="text-gray-500">
+                  Upvotes: {post.upvotes} | Downvotes: {post.downvotes}
+                </p>
+                <div className="flex space-x-4 mt-2">
+                  <button
+                    onClick={() => handleUpvoteBlog(post.id)}
+                    className="bg-green-500 text-white px-4 py-2 rounded"
                   >
-                    Read More →
-                  </Link>
+                    Upvote
+                  </button>
+                  <button
+                    onClick={() => handleDownvoteBlog(post.id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                  >
+                    Downvote
+                  </button>
                 </div>
-              ))
-            ) : (
-              <p className="text-gray-600 text-center">Loading blog posts...</p>
-            )}
+                <Link href={`/blog/${post.id}`} className="block mt-4 text-green-500">
+                  Read More →
+                </Link>
+              </div>
+            ))}
           </div>
         </section>
       </div>
@@ -228,3 +271,6 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+
+

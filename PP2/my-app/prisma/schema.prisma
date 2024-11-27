@@ -47,6 +47,8 @@ model CodeTemplate {
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   tags           CodeTemplateTag[]
   blogPosts      BlogPost[]         @relation("BlogTemplates")
+  upvotes        Int                @default(0)  // Upvote count
+  downvotes      Int                @default(0)  // Downvote count
 }
 
 model CodeTemplateTag {
@@ -71,6 +73,8 @@ model BlogPost {
   reports        InappropriateContentReport[]
   votes          Vote[]
   hidden         Boolean            @default(false)
+  upvotes        Int                @default(0)  // Upvote count
+  downvotes      Int                @default(0)  // Downvote count
 }
 
 model BlogPostTag {
