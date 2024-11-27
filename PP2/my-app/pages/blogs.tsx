@@ -106,6 +106,11 @@ const Blogs = () => {
     setPosts(sorted);
   };
 
+  const sortPostsAlphabetically = () => {
+    const sorted = [...posts].sort((a, b) => a.title.localeCompare(b.title));
+    setPosts(sorted);
+  };
+
   if (!loggedIn) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-6">
@@ -165,6 +170,12 @@ const Blogs = () => {
           className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
         >
           Sort by Downvotes
+        </button>
+        <button
+          onClick={sortPostsAlphabetically}
+          className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+        >
+          Sort Alphabetically
         </button>
       </div>
 
