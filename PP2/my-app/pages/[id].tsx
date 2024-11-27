@@ -15,10 +15,10 @@ const UserDashboard = () => {
   const [userData, setUserData] = useState<UserDashboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
-  const [editMode, setEditMode] = useState(false); // Track edit mode
+  const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<UserDashboard>>({});
   const router = useRouter();
-  const { id } = router.query; // Extract dynamic route parameter
+  const { id } = router.query;
 
   // Fetch user data
   useEffect(() => {
@@ -28,7 +28,7 @@ const UserDashboard = () => {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
         setError("You must be logged in to view this page.");
-        router.push("/auth/login"); // Redirect to login if not authenticated
+        router.push("/auth/login");
         return;
       }
 
@@ -37,7 +37,7 @@ const UserDashboard = () => {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         setUserData(response.data);
-        setFormData(response.data); // Initialize form with current user data
+        setFormData(response.data);
       } catch (err: any) {
         setError(err.response?.data?.message || "Failed to fetch user data");
       } finally {
@@ -79,7 +79,7 @@ const UserDashboard = () => {
       });
 
       setUserData(response.data);
-      setEditMode(false); // Exit edit mode
+      setEditMode(false);
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to update user data");
     }
@@ -108,80 +108,109 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        Welcome, {userData.firstName} {userData.lastName}
-      </h1>
+    <div className="max-w-4xl mx-auto p-6 bg-gray-50 shadow-md rounded-lg">
+      <div className="text-center">
+        <h1 className="text-4xl font-extrabold text-blue-600 mb-4">
+          Welcome, {userData.firstName} {userData.lastName}!
+        </h1>
+        <p className="text-lg text-gray-700 mb-8">
+          Manage your profile details below to keep your information up-to-date.
+        </p>
+      </div>
       {!editMode ? (
         <>
-          <p className="text-gray-700 mb-4">Email: {userData.email}</p>
-          {userData.phone && <p className="text-gray-700 mb-4">Phone: {userData.phone}</p>}
-          {userData.avatar && (
-            <div className="mb-4">
-              <p className="text-gray-700">Avatar:</p>
+          <div className="flex justify-center items-center mb-8">
+            {userData.avatar ? (
               <img
                 src={userData.avatar}
                 alt={`${userData.firstName}'s Avatar`}
-                className="rounded-full w-32 h-32"
+                className="rounded-full w-32 h-32 border-4 border-blue-600"
               />
-            </div>
-          )}
-          <button
-            onClick={() => setEditMode(true)}
-            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-          >
-            Edit Profile
-          </button>
+            ) : (
+              <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                No Avatar
+              </div>
+            )}
+          </div>
+          <div className="text-gray-700 space-y-4 mb-6">
+            <p>
+              <strong>Email:</strong> {userData.email}
+            </p>
+            {userData.phone && (
+              <p>
+                <strong>Phone:</strong> {userData.phone}
+              </p>
+            )}
+          </div>
+          <div className="text-center">
+            <button
+              onClick={() => setEditMode(true)}
+              className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700"
+            >
+              Edit Profile
+            </button>
+          </div>
         </>
       ) : (
         <div className="space-y-4">
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName || ""}
-            onChange={handleInputChange}
-            placeholder="First Name"
-            className="block w-full p-2 border rounded"
-          />
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName || ""}
-            onChange={handleInputChange}
-            placeholder="Last Name"
-            className="block w-full p-2 border rounded"
-          />
-          <input
-            type="email"
-            name="email"
-            value={formData.email || ""}
-            onChange={handleInputChange}
-            placeholder="Email"
-            className="block w-full p-2 border rounded"
-          />
-          <input
-            type="text"
-            name="phone"
-            value={formData.phone || ""}
-            onChange={handleInputChange}
-            placeholder="Phone"
-            className="block w-full p-2 border rounded"
-          />
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="block w-full p-2 border rounded"
-          />
-          <div className="flex space-x-4">
+          <div>
+            <label className="block text-gray-700 font-medium">First Name</label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName || ""}
+              onChange={handleInputChange}
+              className="block w-full p-2 border rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium">Last Name</label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName || ""}
+              onChange={handleInputChange}
+              className="block w-full p-2 border rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email || ""}
+              onChange={handleInputChange}
+              className="block w-full p-2 border rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium">Phone</label>
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone || ""}
+              onChange={handleInputChange}
+              className="block w-full p-2 border rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium">Avatar</label>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              className="block w-full p-2 border rounded"
+            />
+          </div>
+          <div className="flex space-x-4 mt-6">
             <button
               onClick={handleUpdate}
-              className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+              className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700"
             >
               Save Changes
             </button>
             <button
               onClick={() => setEditMode(false)}
-              className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
+              className="bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700"
             >
               Cancel
             </button>
