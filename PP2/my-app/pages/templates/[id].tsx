@@ -68,21 +68,31 @@ const TemplateDetails: React.FC = () => {
   }, [id]);
 
   const handleRunCode = async () => {
+    setOutput(''); // Reset output
     try {
       const response = await fetch('/api/executeTemp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ templateId: id, input }),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to execute the code.');
-      }
-
+  
       const data = await response.json();
-      setOutput(data.output || 'No output.');
-    } catch (err) {
-      setOutput('Error executing code.');
+  
+      if (!response.ok) {
+        throw new Error(data.stderr || data.message || 'Failed to execute the code.');
+      }
+  
+      // Combine stdout and stderr for display
+      const combinedOutput = [
+        data.stdout && `${data.stdout}`,
+        data.stderr && `Error:\n${data.stderr}`,
+      ]
+        .filter(Boolean)
+        .join('\n\n');
+  
+      setOutput(combinedOutput || 'No output or errors.');
+    } catch (err: any) {
+      setOutput(err.message || 'An error occurred while executing the code.');
     }
   };
 

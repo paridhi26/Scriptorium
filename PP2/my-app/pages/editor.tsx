@@ -7,18 +7,17 @@ import { cpp } from '@codemirror/lang-cpp';
 import { rust } from '@codemirror/lang-rust';
 import { php } from '@codemirror/lang-php';
 
-// Supported languages
 const supportedLanguages = [
   { value: 'javascript', label: 'JavaScript', extension: javascript },
   { value: 'python', label: 'Python', extension: python },
   { value: 'java', label: 'Java', extension: java },
   { value: 'cpp', label: 'C++', extension: cpp },
-  { value: 'c', label: 'C', extension: cpp }, // Using C++ extension for C
+  { value: 'c', label: 'C', extension: cpp },
   { value: 'rust', label: 'Rust', extension: rust },
   { value: 'php', label: 'PHP', extension: php },
-  { value: 'ruby', label: 'Ruby', extension: null }, // No CodeMirror extension, fallback to plain text
-  { value: 'go', label: 'Go', extension: null }, // No CodeMirror extension, fallback to plain text
-  { value: 'perl', label: 'Perl', extension: null }, // No CodeMirror extension, fallback to plain text
+  { value: 'ruby', label: 'Ruby', extension: null },
+  { value: 'go', label: 'Go', extension: null },
+  { value: 'perl', label: 'Perl', extension: null },
 ];
 
 const Editor: React.FC = () => {
@@ -59,7 +58,8 @@ const Editor: React.FC = () => {
         throw new Error(data.stderr || data.message || 'Execution failed');
       }
 
-      setOutput(data.stdout || 'No output');
+      const combinedOutput = `${data.stdout || 'No output'}\n${data.stderr || ''}`;
+      setOutput(combinedOutput.trim());
     } catch (err: any) {
       setOutput('');
       setError(err.message || 'An error occurred while executing the code.');
@@ -67,11 +67,9 @@ const Editor: React.FC = () => {
   };
 
   const handleSaveTemplate = () => {
-    // Implement save logic here
-    alert("Template saved successfully!");
+    alert('Template saved successfully!');
   };
 
-  // Get the CodeMirror extension for the selected language
   const currentLanguageExtension = supportedLanguages.find(
     (lang) => lang.value === language
   )?.extension;
@@ -145,5 +143,3 @@ const Editor: React.FC = () => {
 };
 
 export default Editor;
-
-
