@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -14,11 +14,8 @@ const Login = () => {
     e.preventDefault();
     setError("");
 
-    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
-
     try {
-      // Step 1: Authenticate and get authToken + userId
-      const response = await fetch(endpoint, {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,9 +31,6 @@ const Login = () => {
 
       const { token: authToken, userId } = data;
 
-      console.log("Auth Token:", authToken, "User ID:", userId);
-
-      // Step 2: Fetch user details using userId
       const userResponse = await fetch(`/api/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -49,9 +43,6 @@ const Login = () => {
         throw new Error(user.message || "Failed to fetch user details");
       }
 
-      console.log("User Info:", user);
-
-      // Step 3: Save to localStorage and update context
       login(authToken, userId, user);
       router.push(`/${userId}`);
     } catch (err) {
@@ -63,9 +54,7 @@ const Login = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-xl font-semibold mb-4">
-          {isLogin ? "Login" : "Create an Account"}
-        </h1>
+        <h1 className="text-xl font-semibold mb-4">Login</h1>
 
         {error && <p className="text-red-500 mb-4">{error}</p>}
 
@@ -102,9 +91,14 @@ const Login = () => {
             type="submit"
             className="bg-blue-600 text-white py-2 px-4 rounded w-full hover:bg-blue-700"
           >
-            {isLogin ? "Login" : "Sign Up"}
+            Login
           </button>
         </form>
+
+        {/* Link to Signup */}
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Don't have an account? <Link href="/signup" className="text-blue-600 hover:underline">Sign up!</Link>
+        </p>
       </div>
     </div>
   );
