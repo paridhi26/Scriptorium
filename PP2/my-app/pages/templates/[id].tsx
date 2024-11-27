@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 
 interface Template {
   id: string;
@@ -38,10 +39,11 @@ const TemplateDetails: React.FC = () => {
   const [output, setOutput] = useState<string>('');
   const [upvotes, setUpvotes] = useState<number>(0);
   const [downvotes, setDownvotes] = useState<number>(0);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!id) return;
     const fetchTemplate = async () => {
+      if (!id) return;
       setLoading(true);
       try {
         const response = await fetch(`/api/visitors/mentionedCodeTemplates?id=${id}`);
@@ -56,7 +58,13 @@ const TemplateDetails: React.FC = () => {
       }
     };
 
+    const checkUserLoggedIn = () => {
+      const authToken = localStorage.getItem('authToken');
+      setLoggedIn(!!authToken);
+    };
+
     fetchTemplate();
+    checkUserLoggedIn();
   }, [id]);
 
   const handleRunCode = async () => {
@@ -79,16 +87,28 @@ const TemplateDetails: React.FC = () => {
   };
 
   const handleFork = () => {
+    if (!loggedIn) {
+      alert('Login first to use this feature.');
+      return;
+    }
     console.log('Forking template:', id);
     // Add logic to fork the template, e.g., redirecting to a new creation page with pre-filled data.
   };
 
   const handleUpvote = async () => {
+    if (!loggedIn) {
+      alert('Login first to use this feature.');
+      return;
+    }
     setUpvotes((prev) => prev + 1);
     // Implement backend integration for upvoting if needed
   };
 
   const handleDownvote = async () => {
+    if (!loggedIn) {
+      alert('Login first to use this feature.');
+      return;
+    }
     setDownvotes((prev) => prev + 1);
     // Implement backend integration for downvoting if needed
   };
