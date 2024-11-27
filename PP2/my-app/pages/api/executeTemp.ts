@@ -99,7 +99,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const { code, language } = template;
-        const languageName = typeof language === 'string' ? language.toLowerCase() : language?.name?.toLowerCase();
+        let languageName = typeof language === 'string' ? language.toLowerCase() : language?.name?.toLowerCase();
+
+        // change C++ to cpp
+        if (languageName === 'c++') {
+            languageName = 'cpp';
+        }
 
         if (!languageName || !supportedLanguages[languageName]) {
             res.status(400).json({ message: `Unsupported language: ${JSON.stringify(language)}` });
