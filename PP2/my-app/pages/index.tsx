@@ -21,6 +21,9 @@ interface BlogPost {
 const Home: React.FC = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [selectedBlogPost, setSelectedBlogPost] = useState<BlogPost | null>(
+    null
+  ); // For the modal
 
   // Fetch templates and blog posts from the backend
   useEffect(() => {
@@ -252,9 +255,6 @@ const Home: React.FC = () => {
                     Downvote
                   </button>
                 </div>
-                <Link href={`/templates/${template.id}`} className="block mt-4 text-blue-500">
-                  Use Template →
-                </Link>
               </div>
             ))}
           </div>
@@ -308,19 +308,81 @@ const Home: React.FC = () => {
                     Downvote
                   </button>
                 </div>
-                <Link href={`/blog/${post.id}`} className="block mt-4 text-green-500">
-                  Read More →
-                </Link>
+                <button
+                  onClick={() => setSelectedBlogPost(post)}
+                  className="mt-4 text-green-500 underline"
+                >
+                  Read More
+                </button>
               </div>
             ))}
           </div>
         </section>
       </div>
+
+      {/* Blog Post Modal */}
+      {selectedBlogPost && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white max-w-md w-full p-6 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold mb-4">{selectedBlogPost.title}</h2>
+            <p className="text-gray-700">{selectedBlogPost.content}</p>
+            <div className="mt-4">
+              <p className="text-sm text-gray-500">
+                Upvotes: {selectedBlogPost.upvotes} | Downvotes:{" "}
+                {selectedBlogPost.downvotes}
+              </p>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setSelectedBlogPost(null)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
 
 export default Home;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
