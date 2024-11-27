@@ -14,7 +14,6 @@ export default async function forkTemplate(req: NextApiRequest, res: NextApiResp
         return;
     }
 
-    // Get the JWT token from the Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         res.status(401).json({ message: 'Unauthorized' });
@@ -25,7 +24,6 @@ export default async function forkTemplate(req: NextApiRequest, res: NextApiResp
     let userId: number;
 
     try {
-        // Verify the token
         const decoded = jwt.verify(token, SECRET_KEY) as DecodedToken;
         userId = decoded.userId;
     } catch (error) {
@@ -33,17 +31,24 @@ export default async function forkTemplate(req: NextApiRequest, res: NextApiResp
         return;
     }
 
-    const { templateId }: { templateId: number } = req.body;
+    const { templateId }: { templateId: string | number } = req.body;
 
     if (!templateId) {
         res.status(400).json({ message: 'Template ID is required.' });
         return;
     }
 
+    const parsedTemplateId = typeof templateId === 'string' ? parseInt(templateId, 10) : templateId;
+
+    if (isNaN(parsedTemplateId)) {
+        res.status(400).json({ message: 'Invalid Template ID.' });
+        return;
+    }
+
     try {
         // Fetch the original template details
         const originalTemplate = await prisma.codeTemplate.findUnique({
-            where: { id: templateId },
+            where: { id: parsedTemplateId }, // Use the parsed integer
             include: { tags: true, language: true },
         });
 
@@ -52,7 +57,6 @@ export default async function forkTemplate(req: NextApiRequest, res: NextApiResp
             return;
         }
 
-        // Prepare the data for the new template
         const templateData = {
             title: `${originalTemplate.title} (Fork)`,
             description: `${originalTemplate.description} (Forked from template ID: ${originalTemplate.id})`,
@@ -61,7 +65,6 @@ export default async function forkTemplate(req: NextApiRequest, res: NextApiResp
             tags: originalTemplate.tags.map((tag) => tag.tag),
         };
 
-        // Make internal request to saveCodeTemp to create the new forked template
         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/saveCodeTemp`, {
             method: 'POST',
             headers: {
