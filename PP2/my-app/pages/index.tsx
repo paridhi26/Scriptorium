@@ -49,18 +49,20 @@ const Home: React.FC = () => {
 
   const handleUpvoteTemplate = async (id: string) => {
     try {
-      await fetch(`/api/visitors/tempUpvote`, {
+      const response = await fetch(`/api/visitors/tempUpvote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      setTemplates((prev) =>
-        prev.map((template) =>
-          template.id === id
-            ? { ...template, upvotes: template.upvotes + 1 }
-            : template
-        )
-      );
+
+      if (response.ok) {
+        const updatedTemplate = await response.json();
+        setTemplates((prev) =>
+          prev.map((template) =>
+            template.id === id ? { ...template, upvotes: updatedTemplate.upvotes } : template
+          )
+        );
+      }
     } catch (error) {
       console.error("Error upvoting template:", error);
     }
@@ -68,18 +70,20 @@ const Home: React.FC = () => {
 
   const handleDownvoteTemplate = async (id: string) => {
     try {
-      await fetch(`/api/visitors/tempDownvote`, {
+      const response = await fetch(`/api/visitors/tempDownvote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      setTemplates((prev) =>
-        prev.map((template) =>
-          template.id === id
-            ? { ...template, downvotes: template.downvotes + 1 }
-            : template
-        )
-      );
+
+      if (response.ok) {
+        const updatedTemplate = await response.json();
+        setTemplates((prev) =>
+          prev.map((template) =>
+            template.id === id ? { ...template, downvotes: updatedTemplate.downvotes } : template
+          )
+        );
+      }
     } catch (error) {
       console.error("Error downvoting template:", error);
     }
@@ -87,16 +91,20 @@ const Home: React.FC = () => {
 
   const handleUpvoteBlog = async (id: string) => {
     try {
-      await fetch(`/api/visitors/blogUpvote`, {
+      const response = await fetch(`/api/visitors/blogUpvote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      setBlogPosts((prev) =>
-        prev.map((post) =>
-          post.id === id ? { ...post, upvotes: post.upvotes + 1 } : post
-        )
-      );
+
+      if (response.ok) {
+        const updatedBlog = await response.json();
+        setBlogPosts((prev) =>
+          prev.map((post) =>
+            post.id === id ? { ...post, upvotes: updatedBlog.upvotes } : post
+          )
+        );
+      }
     } catch (error) {
       console.error("Error upvoting blog:", error);
     }
@@ -104,16 +112,20 @@ const Home: React.FC = () => {
 
   const handleDownvoteBlog = async (id: string) => {
     try {
-      await fetch(`/api/visitors/blogDownvote`, {
+      const response = await fetch(`/api/visitors/blogDownvote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      setBlogPosts((prev) =>
-        prev.map((post) =>
-          post.id === id ? { ...post, downvotes: post.downvotes + 1 } : post
-        )
-      );
+
+      if (response.ok) {
+        const updatedBlog = await response.json();
+        setBlogPosts((prev) =>
+          prev.map((post) =>
+            post.id === id ? { ...post, downvotes: updatedBlog.downvotes } : post
+          )
+        );
+      }
     } catch (error) {
       console.error("Error downvoting blog:", error);
     }
@@ -271,6 +283,26 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
