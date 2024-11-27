@@ -17,14 +17,15 @@ const TemplatesPage: React.FC = () => {
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const pageSize = 10; // Number of templates per page
 
-  const fetchTemplates = async (page: number) => {
+  const fetchTemplates = async (page: number, query: string) => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get('/api/visitors/allTemplates', {
-        params: { page, pageSize },
+      const response = await axios.get('/api/visitors/searchTemplatesPaginated', {
+        params: { page, pageSize, query }, // Include query in the API request
       });
 
       const { codeTemplates, totalPages } = response.data;
@@ -38,8 +39,13 @@ const TemplatesPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchTemplates(currentPage);
-  }, [currentPage]);
+    fetchTemplates(currentPage, searchQuery); // Fetch templates initially with query
+  }, [currentPage]); // Trigger fetch when currentPage changes, not searchQuery
+
+  const handleSearch = () => {
+    setCurrentPage(1); // Reset to the first page when a new search is initiated
+    fetchTemplates(1, searchQuery); // Fetch with the search query
+  };
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -59,6 +65,38 @@ const TemplatesPage: React.FC = () => {
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1 className="text-3xl font-bold mb-6 text-center">Code Templates</h1>
+      
+      {/* Search Bar and Button */}
+      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)} // Update search query state
+          placeholder="Search templates..."
+          style={{
+            padding: '10px',
+            fontSize: '16px',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+            marginRight: '10px',
+            width: '300px',
+          }}
+        />
+        <button
+          onClick={handleSearch} // Only fetch on button click
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Search
+        </button>
+      </div>
+
       <div
         style={{
           display: 'grid',
