@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "../context/AuthContext";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -10,7 +9,6 @@ const Signup = () => {
   const [phone, setPhone] = useState("");
   const [avatar, setAvatar] = useState<File | null>(null);
   const [error, setError] = useState("");
-  const { login } = useAuth();
   const router = useRouter();
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -28,7 +26,7 @@ const Signup = () => {
     }
 
     try {
-      // Step 1: Create user and get authToken + userId
+      // Step 1: Create user
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         body: formData,
@@ -40,26 +38,8 @@ const Signup = () => {
         throw new Error(data.message || "Failed to create account");
       }
 
-      const { id: userId, email } = data;
-
-      // Step 2: Fetch user details
-      const userResponse = await fetch(`/api/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
-
-      const user = await userResponse.json();
-
-      if (!userResponse.ok) {
-        throw new Error(user.message || "Failed to fetch user details");
-      }
-
-      // Step 3: Save user info and login
-      login(localStorage.getItem("authToken") || "", userId, user);
-
-      // Redirect to the home page
-      router.push("/");
+      // Redirect to login page after successful signup
+      router.push("/login");
     } catch (err) {
       console.error("Error during signup:", err);
       setError(err instanceof Error ? err.message : "An unexpected error occurred.");
