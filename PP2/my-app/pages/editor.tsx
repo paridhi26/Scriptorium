@@ -26,6 +26,12 @@ const Editor: React.FC = () => {
   const [language, setLanguage] = useState('javascript');
   const [error, setError] = useState('');
   const [input, setInput] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // Authentication check
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [tags, setTags] = useState<string>('');
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   const handleCodeChange = (value: string) => {
     setCode(value);
@@ -66,8 +72,52 @@ const Editor: React.FC = () => {
     }
   };
 
-  const handleSaveTemplate = () => {
-    alert('Template saved successfully!');
+  // ------------------------------------ Handle Save Template Feature ---------------------------------------
+  const handleSaveClick = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    if (!loggedIn) {
+      alert('Login first to use this feature.');
+      return;
+    }
+  
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      alert('Login session expired. Please log in again.');
+      return;
+    }
+  
+    const tagArray = tags.split(',').map(tag => tag.trim()); // Convert comma-separated tags to an array
+  
+    const payload = {
+      title,
+      description,
+      code,
+      languageId: supportedLanguages.find((lang) => lang.value === language)?.value ?? 1, // Assign the correct languageId
+      tags: tagArray,
+    };
+  
+    try {
+      const response = await fetch('/api/users/saveCodeTemp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`, // Add token here
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(result.message || 'Error saving template.');
+      }
+  
+      alert('Template saved successfully!');
+      setShowPopup(false); // Close the popup after successful save
+    } catch (error: any) {
+      alert(error.message || 'An error occurred while saving the template.');
+    }
   };
 
   const currentLanguageExtension = supportedLanguages.find(
@@ -100,7 +150,7 @@ const Editor: React.FC = () => {
                 Execute Code
               </button>
               <button
-                onClick={handleSaveTemplate}
+                onClick={handleSaveClick}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors"
               >
                 Save as Template
@@ -138,6 +188,55 @@ const Editor: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {showPopup && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h3 className="text-xl font-semibold mb-4">Save Template</h3>
+            <form onSubmit={handleSaveTemplate}>
+              <div className="mb-4">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                  rows={4}
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="tags" className="block text-sm font-medium text-gray-700">Tags (comma-separated)</label>
+                <input
+                  type="text"
+                  id="tags"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                Save Template
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
