@@ -22,6 +22,7 @@ const Home: React.FC = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 
+  // Fetch templates and blog posts from the backend
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
@@ -47,7 +48,15 @@ const Home: React.FC = () => {
     fetchBlogPosts();
   }, []);
 
+  // Optimistic update for upvote/downvote actions
   const handleUpvoteTemplate = async (id: string) => {
+    setTemplates((prev) =>
+      prev.map((template) =>
+        template.id === id
+          ? { ...template, upvotes: template.upvotes + 1 }
+          : template
+      )
+    );
     try {
       const response = await fetch(`/api/visitors/tempUpvote`, {
         method: "POST",
@@ -55,20 +64,29 @@ const Home: React.FC = () => {
         body: JSON.stringify({ id }),
       });
 
-      if (response.ok) {
-        const updatedTemplate = await response.json();
-        setTemplates((prev) =>
-          prev.map((template) =>
-            template.id === id ? { ...template, upvotes: updatedTemplate.upvotes } : template
-          )
-        );
+      if (!response.ok) {
+        throw new Error("Failed to upvote template");
       }
     } catch (error) {
       console.error("Error upvoting template:", error);
+      setTemplates((prev) =>
+        prev.map((template) =>
+          template.id === id
+            ? { ...template, upvotes: template.upvotes - 1 }
+            : template
+        )
+      );
     }
   };
 
   const handleDownvoteTemplate = async (id: string) => {
+    setTemplates((prev) =>
+      prev.map((template) =>
+        template.id === id
+          ? { ...template, downvotes: template.downvotes + 1 }
+          : template
+      )
+    );
     try {
       const response = await fetch(`/api/visitors/tempDownvote`, {
         method: "POST",
@@ -76,20 +94,29 @@ const Home: React.FC = () => {
         body: JSON.stringify({ id }),
       });
 
-      if (response.ok) {
-        const updatedTemplate = await response.json();
-        setTemplates((prev) =>
-          prev.map((template) =>
-            template.id === id ? { ...template, downvotes: updatedTemplate.downvotes } : template
-          )
-        );
+      if (!response.ok) {
+        throw new Error("Failed to downvote template");
       }
     } catch (error) {
       console.error("Error downvoting template:", error);
+      setTemplates((prev) =>
+        prev.map((template) =>
+          template.id === id
+            ? { ...template, downvotes: template.downvotes - 1 }
+            : template
+        )
+      );
     }
   };
 
   const handleUpvoteBlog = async (id: string) => {
+    setBlogPosts((prev) =>
+      prev.map((post) =>
+        post.id === id
+          ? { ...post, upvotes: post.upvotes + 1 }
+          : post
+      )
+    );
     try {
       const response = await fetch(`/api/visitors/blogUpvote`, {
         method: "POST",
@@ -97,20 +124,29 @@ const Home: React.FC = () => {
         body: JSON.stringify({ id }),
       });
 
-      if (response.ok) {
-        const updatedBlog = await response.json();
-        setBlogPosts((prev) =>
-          prev.map((post) =>
-            post.id === id ? { ...post, upvotes: updatedBlog.upvotes } : post
-          )
-        );
+      if (!response.ok) {
+        throw new Error("Failed to upvote blog post");
       }
     } catch (error) {
-      console.error("Error upvoting blog:", error);
+      console.error("Error upvoting blog post:", error);
+      setBlogPosts((prev) =>
+        prev.map((post) =>
+          post.id === id
+            ? { ...post, upvotes: post.upvotes - 1 }
+            : post
+        )
+      );
     }
   };
 
   const handleDownvoteBlog = async (id: string) => {
+    setBlogPosts((prev) =>
+      prev.map((post) =>
+        post.id === id
+          ? { ...post, downvotes: post.downvotes + 1 }
+          : post
+      )
+    );
     try {
       const response = await fetch(`/api/visitors/blogDownvote`, {
         method: "POST",
@@ -118,16 +154,18 @@ const Home: React.FC = () => {
         body: JSON.stringify({ id }),
       });
 
-      if (response.ok) {
-        const updatedBlog = await response.json();
-        setBlogPosts((prev) =>
-          prev.map((post) =>
-            post.id === id ? { ...post, downvotes: updatedBlog.downvotes } : post
-          )
-        );
+      if (!response.ok) {
+        throw new Error("Failed to downvote blog post");
       }
     } catch (error) {
-      console.error("Error downvoting blog:", error);
+      console.error("Error downvoting blog post:", error);
+      setBlogPosts((prev) =>
+        prev.map((post) =>
+          post.id === id
+            ? { ...post, downvotes: post.downvotes - 1 }
+            : post
+        )
+      );
     }
   };
 
@@ -283,6 +321,7 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
 
 
 
