@@ -8,6 +8,8 @@ interface Post {
   content: string;
   tags: { tag: string }[]; // Tags are objects with a `tag` field
   codeTemplates: { id: string }[]; // Code templates are objects with an `id` field
+  upvotes: number;
+  downvotes: number;
 }
 
 interface NewPost {
@@ -33,7 +35,6 @@ const Blogs = () => {
   const [password, setPassword] = useState<string>("");
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
-  // Fetch posts after login
   useEffect(() => {
     if (loggedIn) {
       const fetchPosts = async () => {
@@ -55,13 +56,11 @@ const Blogs = () => {
     }
   }, [loggedIn]);
 
-  // Handle login
   const handleLogin = async () => {
     try {
       const response = await axios.post<{ token: string }>("/api/auth/login", { email, password });
       const token = response.data.token;
 
-      // Store the token for subsequent requests
       localStorage.setItem("authToken", token);
       setLoggedIn(true);
     } catch (err: any) {
@@ -95,6 +94,16 @@ const Blogs = () => {
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to create post");
     }
+  };
+
+  const sortPostsByUpvotes = () => {
+    const sorted = [...posts].sort((a, b) => b.upvotes - a.upvotes);
+    setPosts(sorted);
+  };
+
+  const sortPostsByDownvotes = () => {
+    const sorted = [...posts].sort((a, b) => b.downvotes - a.downvotes);
+    setPosts(sorted);
   };
 
   if (!loggedIn) {
@@ -144,6 +153,21 @@ const Blogs = () => {
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">Blog Posts</h1>
 
+      <div className="mb-4 flex justify-end space-x-4">
+        <button
+          onClick={sortPostsByUpvotes}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Sort by Upvotes
+        </button>
+        <button
+          onClick={sortPostsByDownvotes}
+          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+        >
+          Sort by Downvotes
+        </button>
+      </div>
+
       <ul className="space-y-6 mb-12">
         {posts.map((post) => (
           <li key={post.id} className="p-6 border rounded-lg shadow-lg bg-white">
@@ -155,6 +179,9 @@ const Blogs = () => {
             <p className="text-sm text-gray-500 mt-2">
               Code Templates:{" "}
               {post.codeTemplates.map((ct) => ct.id).join(", ") || "No templates"}
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
+              Upvotes: {post.upvotes} | Downvotes: {post.downvotes}
             </p>
           </li>
         ))}
