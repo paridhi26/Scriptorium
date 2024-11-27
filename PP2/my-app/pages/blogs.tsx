@@ -35,25 +35,19 @@ const Blogs = () => {
   });
 
   useEffect(() => {
-    if (loggedIn) {
-      const fetchPosts = async () => {
-        try {
-          const response = await axios.get<Post[]>("/api/posts", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
-          });
-          setPosts(response.data);
-        } catch (err: any) {
-          setError(err.response?.data?.message || "Failed to fetch posts");
-        } finally {
-          setLoading(false);
-        }
-      };
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get<Post[]>("/api/posts");
+        setPosts(response.data);
+      } catch (err: any) {
+        setError(err.response?.data?.message || "Failed to fetch posts");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      fetchPosts();
-    }
-  }, [loggedIn]);
+    fetchPosts();
+  }, []);
 
   const handleCreatePost = async () => {
     try {
@@ -97,14 +91,6 @@ const Blogs = () => {
     const sorted = [...posts].sort((a, b) => a.title.localeCompare(b.title));
     setPosts(sorted);
   };
-
-  if (!loggedIn) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-xl font-semibold">You must be logged in to view this page.</p>
-      </div>
-    );
-  }
 
   if (loading)
     return (
@@ -151,11 +137,11 @@ const Blogs = () => {
             <h2 className="text-xl font-semibold text-blue-600">{post.title}</h2>
             <p className="text-gray-600 mt-2">{post.description}</p>
             <p className="text-sm text-gray-500 mt-2">
-              Tags: {post.tags.map((tag) => tag.tag).join(", ") || "No tags"}
+              Tags: {post.tags?.map((tag) => tag.tag).join(", ") || "No tags"}
             </p>
             <p className="text-sm text-gray-500 mt-2">
               Code Templates:{" "}
-              {post.codeTemplates.map((ct) => ct.id).join(", ") || "No templates"}
+              {post.codeTemplates?.map((ct) => ct.id).join(", ") || "No templates"}
             </p>
             <p className="text-sm text-gray-500 mt-2">
               Upvotes: {post.upvotes} | Downvotes: {post.downvotes}
@@ -164,52 +150,57 @@ const Blogs = () => {
         ))}
       </ul>
 
-      <h2 className="text-2xl font-semibold mb-4">Create New Post</h2>
-      <div className="p-6 bg-gray-100 border rounded-lg shadow-md">
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Title"
-            value={newPost.title}
-            onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="Description"
-            value={newPost.description}
-            onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
-          />
-          <textarea
-            placeholder="Content"
-            value={newPost.content}
-            onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md resize-none"
-            rows={5}
-          />
-          <input
-            type="text"
-            placeholder="Tags (comma separated)"
-            value={newPost.tags}
-            onChange={(e) => setNewPost({ ...newPost, tags: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="Code Template IDs (comma separated)"
-            value={newPost.codeTemplateIds}
-            onChange={(e) => setNewPost({ ...newPost, codeTemplateIds: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md"
-          />
-          <button
-            onClick={handleCreatePost}
-            className="w-full px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700"
-          >
-            Create Post
-          </button>
-        </div>
-      </div>
+      {/* Create New Post Section for Logged-In Users Only */}
+      {loggedIn && (
+        <>
+          <h2 className="text-2xl font-semibold mb-4">Create New Post</h2>
+          <div className="p-6 bg-gray-100 border rounded-lg shadow-md">
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Title"
+                value={newPost.title}
+                onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={newPost.description}
+                onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              <textarea
+                placeholder="Content"
+                value={newPost.content}
+                onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+                className="w-full px-4 py-2 border rounded-md resize-none"
+                rows={5}
+              />
+              <input
+                type="text"
+                placeholder="Tags (comma separated)"
+                value={newPost.tags}
+                onChange={(e) => setNewPost({ ...newPost, tags: e.target.value })}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              <input
+                type="text"
+                placeholder="Code Template IDs (comma separated)"
+                value={newPost.codeTemplateIds}
+                onChange={(e) => setNewPost({ ...newPost, codeTemplateIds: e.target.value })}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              <button
+                onClick={handleCreatePost}
+                className="w-full px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700"
+              >
+                Create Post
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
