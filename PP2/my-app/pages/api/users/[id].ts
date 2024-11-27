@@ -62,6 +62,7 @@ export default async function handler(req: ExtendedNextApiRequest, res: NextApiR
                     lastName: true,
                     avatar: true,
                     phone: true,
+                    role: true,
                 },
             });
 

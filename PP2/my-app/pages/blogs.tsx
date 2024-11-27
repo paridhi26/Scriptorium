@@ -11,28 +11,17 @@ interface Post {
   codeTemplates: { id: string }[];
   upvotes: number;
   downvotes: number;
-}
-
-interface NewPost {
-  title: string;
-  description: string;
-  content: string;
-  tags: string;
-  codeTemplateIds: string;
+  hidden: boolean; // Ensure hidden is included
+  userId: string; // Ensure userId is included
 }
 
 const Blogs = () => {
-  const { loggedIn, id, user } = useAuth(); // Access auth state
+  const { loggedIn, id: userId } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
-  const [newPost, setNewPost] = useState<NewPost>({
-    title: "",
-    description: "",
-    content: "",
-    tags: "",
-    codeTemplateIds: "",
-  });
+  const [reportingPostId, setReportingPostId] = useState<string | null>(null);
+  const [reportReason, setReportReason] = useState<string>("");
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -49,19 +38,19 @@ const Blogs = () => {
     fetchPosts();
   }, []);
 
-  const handleCreatePost = async () => {
-    try {
-      const tagsArray = newPost.tags.split(",").map((tag) => tag.trim());
-      const codeTemplateIdsArray = newPost.codeTemplateIds
-        .split(",")
-        .map((id) => id.trim());
+  const handleReport = async () => {
+    if (!reportingPostId || !reportReason.trim()) {
+      setError("Please provide a reason for reporting.");
+      return;
+    }
 
-      const response = await axios.post<Post>(
-        "/api/posts",
+    try {
+      await axios.post(
+        "/api/reports",
         {
-          ...newPost,
-          tags: tagsArray,
-          codeTemplateIds: codeTemplateIdsArray,
+          contentId: parseInt(reportingPostId, 10),
+          contentType: "post",
+          reason: reportReason,
         },
         {
           headers: {
@@ -70,10 +59,11 @@ const Blogs = () => {
         }
       );
 
-      setPosts([response.data, ...posts]);
-      setNewPost({ title: "", description: "", content: "", tags: "", codeTemplateIds: "" });
+      alert("Report submitted successfully!");
+      setReportingPostId(null); // Reset the state after reporting
+      setReportReason("");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to create post");
+      setError(err.response?.data?.message || "Failed to submit report");
     }
   };
 
@@ -146,60 +136,58 @@ const Blogs = () => {
             <p className="text-sm text-gray-500 mt-2">
               Upvotes: {post.upvotes} | Downvotes: {post.downvotes}
             </p>
+
+            {/* Hidden Indicator for User's Hidden Post */}
+            {post.hidden && post.userId === userId && (
+              <p className="text-red-600 font-semibold mt-4">
+                This post has been hidden by an admin.
+              </p>
+            )}
+
+            {/* Report Button */}
+            {loggedIn && post.userId !== userId && !post.hidden && (
+              <button
+                onClick={() => setReportingPostId(post.id)}
+                className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Report
+              </button>
+            )}
           </li>
         ))}
       </ul>
 
-      {/* Create New Post Section for Logged-In Users Only */}
-      {loggedIn && (
-        <>
-          <h2 className="text-2xl font-semibold mb-4">Create New Post</h2>
-          <div className="p-6 bg-gray-100 border rounded-lg shadow-md">
-            <div className="space-y-4">
-              <input
-                type="text"
-                placeholder="Title"
-                value={newPost.title}
-                onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                className="w-full px-4 py-2 border rounded-md"
-              />
-              <input
-                type="text"
-                placeholder="Description"
-                value={newPost.description}
-                onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
-                className="w-full px-4 py-2 border rounded-md"
-              />
-              <textarea
-                placeholder="Content"
-                value={newPost.content}
-                onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-                className="w-full px-4 py-2 border rounded-md resize-none"
-                rows={5}
-              />
-              <input
-                type="text"
-                placeholder="Tags (comma separated)"
-                value={newPost.tags}
-                onChange={(e) => setNewPost({ ...newPost, tags: e.target.value })}
-                className="w-full px-4 py-2 border rounded-md"
-              />
-              <input
-                type="text"
-                placeholder="Code Template IDs (comma separated)"
-                value={newPost.codeTemplateIds}
-                onChange={(e) => setNewPost({ ...newPost, codeTemplateIds: e.target.value })}
-                className="w-full px-4 py-2 border rounded-md"
-              />
+      {/* Report Modal */}
+      {reportingPostId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-md max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-4">Report Post</h3>
+            <textarea
+              placeholder="Reason for reporting this post"
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              className="w-full px-4 py-2 border rounded-md resize-none mb-4"
+              rows={4}
+            />
+            <div className="flex justify-end space-x-4">
               <button
-                onClick={handleCreatePost}
-                className="w-full px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700"
+                onClick={() => {
+                  setReportingPostId(null);
+                  setReportReason("");
+                }}
+                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
               >
-                Create Post
+                Cancel
+              </button>
+              <button
+                onClick={handleReport}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Submit Report
               </button>
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
