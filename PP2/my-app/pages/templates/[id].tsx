@@ -92,13 +92,39 @@ const TemplateDetails: React.FC = () => {
     }
   };
 
-  const handleFork = () => {
+  const handleFork = async () => {
     if (!loggedIn) {
       alert('Login first to use this feature.');
       return;
     }
-    console.log('Forking template:', id);
-    // Add logic to fork the template, e.g., redirecting to a new creation page with pre-filled data.
+  
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        alert('Login session expired. Please log in again.');
+        return;
+      }
+  
+      const response = await fetch('/api/users/forkTemp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ templateId: id }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fork the template.');
+      }
+  
+      const forkedTemplate = await response.json();
+      alert('Template forked successfully! Redirecting to the new template...');
+      router.push(`/templates/${forkedTemplate.id}`);
+    } catch (error: any) {
+      alert(error.message || 'An error occurred while forking the template.');
+    }
   };
 
   if (loading) return <p>Loading template...</p>;
