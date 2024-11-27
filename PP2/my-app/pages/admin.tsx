@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
@@ -25,7 +26,7 @@ interface ReportedComment {
 }
 
 const AdminPage = () => {
-  const { user, loggedIn } = useAuth(); // Access the auth context
+  const { user, loggedIn } = useAuth();
   const [reportedPosts, setReportedPosts] = useState<ReportedPost[]>([]);
   const [reportedComments, setReportedComments] = useState<ReportedComment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +34,6 @@ const AdminPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect if not logged in or not an admin
     if (!loggedIn || user?.role !== "ADMIN") {
       router.push("/");
       return;
@@ -71,7 +71,6 @@ const AdminPage = () => {
         }
       );
 
-      // Update the state to reflect the hidden content
       if (contentType === "post") {
         setReportedPosts((prev) =>
           prev.map((post) =>
@@ -115,69 +114,191 @@ const AdminPage = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      <div className="mb-8">
+    <div className="max-w-6xl mx-auto p-6 space-y-10">
+      <h1 className="text-4xl font-bold text-center">Admin Dashboard</h1>
+
+      <div>
         <h2 className="text-2xl font-semibold mb-4">Reported Posts</h2>
-        {reportedPosts.length === 0 ? (
-          <p>No reported posts.</p>
-        ) : (
-          reportedPosts.map((post) => (
-            <div key={post.id} className="p-4 border rounded mb-4">
-              <h3 className="text-xl font-bold">{post.title}</h3>
-              <p>{post.hidden ? "Hidden" : "Visible"}</p>
-              <ul className="mt-2 text-sm">
-                {post.reports.map((report) => (
-                  <li key={report.id}>
-                    <strong>Reason:</strong> {report.reason} (Reported by User ID:{" "}
-                    {report.userId})
-                  </li>
-                ))}
-              </ul>
-              {!post.hidden && (
-                <button
-                  onClick={() => handleHideContent(post.id, "post")}
-                  className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
+        <div className="overflow-x-auto">
+          <div className="flex space-x-6">
+            {reportedPosts.length === 0 ? (
+              <p className="text-gray-600">No reported posts.</p>
+            ) : (
+              reportedPosts.map((post) => (
+                <div
+                  key={post.id}
+                  className="flex-shrink-0 w-80 p-4 bg-white shadow-md rounded-lg border"
                 >
-                  Hide Post
-                </button>
-              )}
-            </div>
-          ))
-        )}
+                  <h3 className="text-xl font-bold text-gray-800">{post.title}</h3>
+                  <p className="text-gray-600">{post.hidden ? "Hidden" : "Visible"}</p>
+                  <ul className="mt-2 text-sm text-gray-700">
+                    {post.reports.map((report) => (
+                      <li key={report.id} className="mt-1">
+                        <strong>Reason:</strong> {report.reason}{" "}
+                        <span className="text-gray-500">(User ID: {report.userId})</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {!post.hidden && (
+                    <button
+                      onClick={() => handleHideContent(post.id, "post")}
+                      className="mt-4 w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Hide Post
+                    </button>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
 
       <div>
         <h2 className="text-2xl font-semibold mb-4">Reported Comments</h2>
-        {reportedComments.length === 0 ? (
-          <p>No reported comments.</p>
-        ) : (
-          reportedComments.map((comment) => (
-            <div key={comment.id} className="p-4 border rounded mb-4">
-              <p className="text-gray-800">{comment.content}</p>
-              <p>{comment.hidden ? "Hidden" : "Visible"}</p>
-              <ul className="mt-2 text-sm">
-                {comment.reports.map((report) => (
-                  <li key={report.id}>
-                    <strong>Reason:</strong> {report.reason} (Reported by User ID:{" "}
-                    {report.userId})
-                  </li>
-                ))}
-              </ul>
-              {!comment.hidden && (
-                <button
-                  onClick={() => handleHideContent(comment.id, "comment")}
-                  className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
+        <div className="overflow-x-auto">
+          <div className="flex space-x-6">
+            {reportedComments.length === 0 ? (
+              <p className="text-gray-600">No reported comments.</p>
+            ) : (
+              reportedComments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="flex-shrink-0 w-80 p-4 bg-white shadow-md rounded-lg border"
                 >
-                  Hide Comment
-                </button>
-              )}
-            </div>
-          ))
-        )}
+                  <p className="text-gray-800">{comment.content}</p>
+                  <p className="text-gray-600">{comment.hidden ? "Hidden" : "Visible"}</p>
+                  <ul className="mt-2 text-sm text-gray-700">
+                    {comment.reports.map((report) => (
+                      <li key={report.id} className="mt-1">
+                        <strong>Reason:</strong> {report.reason}{" "}
+                        <span className="text-gray-500">(User ID: {report.userId})</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {!comment.hidden && (
+                    <button
+                      onClick={() => handleHideContent(comment.id, "comment")}
+                      className="mt-4 w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Hide Comment
+                    </button>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default AdminPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
