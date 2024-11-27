@@ -122,7 +122,7 @@ const TemplatesPage: React.FC = () => {
                 (e.currentTarget.style.transform = 'scale(1)')
               }
             >
-              <h2 style={{ fontSize: '1.5em', marginBottom: '10px' }}>{template.title}</h2>
+              <h3 className="text-xl font-semibold text-gray-800">{template.title}</h3>
               <p style={{ marginBottom: '10px', color: '#555' }}>{template.description}</p>
               <div style={{ marginBottom: '10px' }}>
                 <strong>Tags: </strong>
