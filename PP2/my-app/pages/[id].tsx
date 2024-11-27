@@ -11,8 +11,16 @@ interface UserDashboard {
   avatar?: string;
 }
 
+interface BlogPost {
+  id: string;
+  title: string;
+  description: string;
+  hidden: boolean;
+}
+
 const UserDashboard = () => {
   const [userData, setUserData] = useState<UserDashboard | null>(null);
+  const [userPosts, setUserPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
@@ -20,9 +28,9 @@ const UserDashboard = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  // Fetch user data
+  // Fetch user data and blog posts
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       if (!id || typeof id !== "string") return;
 
       const authToken = localStorage.getItem("authToken");
@@ -33,19 +41,27 @@ const UserDashboard = () => {
       }
 
       try {
-        const response = await axios.get<UserDashboard>(`/api/users/${id}`, {
+        // Fetch user data
+        const userResponse = await axios.get<UserDashboard>(`/api/users/${id}`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
-        setUserData(response.data);
-        setFormData(response.data);
+        setUserData(userResponse.data);
+        setFormData(userResponse.data);
+
+        // Fetch user's blog posts
+        const postsResponse = await axios.get<BlogPost[]>(`/api/posts/getMy`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        setUserPosts(postsResponse.data);
       } catch (err: any) {
+        console.error("Error fetching data:", err);
         setError(err.response?.data?.message || "Failed to fetch user data");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserData();
+    fetchData();
   }, [id, router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -81,28 +97,30 @@ const UserDashboard = () => {
       setUserData(response.data);
       setEditMode(false);
     } catch (err: any) {
+      console.error("Error updating user data:", err);
       setError(err.response?.data?.message || "Failed to update user data");
     }
   };
 
-  if (!userData) {
-    if (error) {
-      return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-6">
-          <h2 className="text-2xl font-bold mb-6">You are not logged in</h2>
-          <button
-            onClick={() => router.push("/auth/login")}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Login
-          </button>
-          {error && <p className="mt-4 text-red-500">{error}</p>}
-        </div>
-      );
-    }
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <p className="text-xl font-semibold">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-6">
+        <h2 className="text-2xl font-bold mb-6">You are not logged in</h2>
+        <button
+          onClick={() => router.push("/auth/login")}
+          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Login
+        </button>
+        {error && <p className="mt-4 text-red-500">{error}</p>}
       </div>
     );
   }
@@ -217,6 +235,32 @@ const UserDashboard = () => {
           </div>
         </div>
       )}
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold mb-4">Your Blog Posts</h2>
+        {userPosts.length > 0 ? (
+          <ul className="space-y-4">
+            {userPosts.map((post) => (
+              <li
+                key={post.id}
+                className={`p-4 border rounded-lg shadow-sm ${
+                  post.hidden ? "bg-red-100" : "bg-white"
+                }`}
+              >
+                <h3 className="text-xl font-bold">{post.title}</h3>
+                <p className="text-gray-700">{post.description}</p>
+                {post.hidden && (
+                  <p className="text-red-500 font-semibold mt-2">
+                    This post is hidden.
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-500">You have no blog posts yet.</p>
+        )}
+      </div>
       {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
