@@ -4,7 +4,7 @@ import { CodeIcon, BookOpenIcon } from "@heroicons/react/outline";
 
 interface Template {
   id: string;
-  name: string;
+  title: string;
   description: string;
   upvotes: number;
   downvotes: number;
@@ -232,7 +232,7 @@ const Home: React.FC = () => {
                 className="bg-white p-6 rounded-lg shadow-md"
               >
                 <h3 className="text-xl font-semibold text-gray-800">
-                  {template.name}
+                  {template.title}
                 </h3>
                 <p className="text-gray-600">{template.description}</p>
                 <p className="text-gray-500">
