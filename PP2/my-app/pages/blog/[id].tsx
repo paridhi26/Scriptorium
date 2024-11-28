@@ -11,12 +11,23 @@ interface BlogPost {
   tags?: { tag: string }[];
 }
 
+interface Comment {
+  id: string;
+  content: string;
+  createdAt: string;
+}
+
 const BlogDetail = () => {
   const router = useRouter();
   const { id } = router.query; // Fetch dynamic route parameter
   const [blog, setBlog] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [commentError, setCommentError] = useState<string | null>(null);
+  const [loadingComments, setLoadingComments] = useState(true);
 
   useEffect(() => {
     if (!id) return;
@@ -37,8 +48,38 @@ const BlogDetail = () => {
       }
     };
 
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/visitors/commentsSorted?id=${id}`
+        );
+        setComments(response.data);
+      } catch (err: any) {
+        console.error("Error fetching comments:", err);
+        setCommentError("Failed to fetch comments.");
+      } finally {
+        setLoadingComments(false);
+      }
+    };
+
     fetchBlog();
+    fetchComments();
   }, [id]);
+
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+    try {
+      await axios.post(`/api/posts/${id}/comments`, { content: newComment });
+      setComments((prev) => [
+        ...prev,
+        { id: `${Date.now()}`, content: newComment, createdAt: new Date().toISOString() },
+      ]);
+      setNewComment("");
+    } catch (err: any) {
+      console.error("Error adding comment:", err);
+      setCommentError("Failed to add comment.");
+    }
+  };
 
   if (loading)
     return (
@@ -99,6 +140,42 @@ const BlogDetail = () => {
               {blog.downvotes}
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      <div className="bg-gray-100 shadow-md rounded-md p-6 mt-6">
+        <h2 className="text-2xl font-bold mb-4">Comments</h2>
+
+        {loadingComments ? (
+          <p>Loading comments...</p>
+        ) : commentError ? (
+          <p className="text-red-500">{commentError}</p>
+        ) : comments.length > 0 ? (
+          comments.map((comment) => (
+            <div key={comment.id} className="mb-4">
+              <p className="text-gray-700">{comment.content}</p>
+              <p className="text-sm text-gray-500">{new Date(comment.createdAt).toLocaleString()}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500">No comments yet. Be the first to comment!</p>
+        )}
+
+        <div className="mt-6">
+          <textarea
+            className="w-full p-2 border border-gray-300 rounded-md"
+            rows={3}
+            placeholder="Add a comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          ></textarea>
+          <button
+            onClick={handleAddComment}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+          >
+            Post Comment
+          </button>
         </div>
       </div>
     </div>
