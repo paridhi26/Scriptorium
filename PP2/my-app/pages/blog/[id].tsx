@@ -34,7 +34,7 @@ const BlogDetail = () => {
 
     const fetchBlog = async () => {
       try {
-        const response = await axios.get(`/api/posts/${id}`, {
+        const response = await axios.get(`/api/visitors/fetchFromLink?id=${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
