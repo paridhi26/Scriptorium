@@ -192,16 +192,28 @@ const Home: React.FC = () => {
   return (
     <>
       <div className="bg-gray-100 py-20">
-        <div className="container mx-auto text-center px-4">
-          <h1 className="text-5xl font-extrabold mb-4 text-gray-800">
-            Welcome to Scriptorium
-          </h1>
-          <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-600">
-            Write, execute, and share code in multiple programming languages.
-            Join our community of developers today!
-          </p>
-        </div>
-      </div>
+  <div className="container mx-auto text-center px-4">
+    <h1 className="text-5xl font-extrabold mb-4 text-gray-800">
+      Welcome to Scriptorium
+    </h1>
+    <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-600">
+      Write, execute, and share code in multiple programming languages.
+      Join our community of developers today!
+    </p>
+    <div className="flex justify-center space-x-4">
+      <Link href="/editor">
+        <button className="bg-blue-500 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-600">
+          Launch Online Editor
+        </button>
+      </Link>
+      <Link href="/signup">
+        <button className="bg-green-500 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-green-600">
+          Sign Up Today
+        </button>
+      </Link>
+    </div>
+  </div>
+</div>
 
       <div className="container mx-auto px-4 py-16">
         <section className="mb-16">

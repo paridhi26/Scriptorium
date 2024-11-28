@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 
 interface Post {
@@ -203,34 +204,25 @@ const Blogs = () => {
 
       {/* Horizontal Scrollable Blog Posts */}
       <div className="overflow-x-auto whitespace-nowrap py-4">
-        <div className="flex space-x-6">
-          {currentPosts.map((post) => (
-            <div
-              key={post.id}
-              className="inline-block min-w-[300px] max-w-[300px] p-6 border rounded-lg shadow-lg bg-white"
-            >
-              <h2 className="text-xl font-semibold text-blue-600 truncate">{post.title}</h2>
-              <p className="text-gray-600 mt-2 line-clamp-3 overflow-hidden text-ellipsis whitespace-normal">
-                {post.description}
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Tags: {post.tags?.map((tag) => tag.tag).join(", ") || "No tags"}
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Upvotes: {post.upvotes} | Downvotes: {post.downvotes}
-              </p>
-              {loggedIn && post.userId !== userId && !post.hidden && (
-                <button
-                  onClick={() => setReportingPostId(post.id)}
-                  className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                >
-                  Report
-                </button>
-              )}
-            </div>
-          ))}
+  <div className="flex space-x-6">
+    {currentPosts.map((post) => (
+      <Link href={`/blog/${post.id}`} key={post.id} passHref>
+        <div className="inline-block min-w-[300px] max-w-[300px] p-6 border rounded-lg shadow-lg bg-white cursor-pointer hover:shadow-xl transition-shadow">
+          <h2 className="text-xl font-semibold text-blue-600 truncate">{post.title}</h2>
+          <p className="text-gray-600 mt-2 line-clamp-3 overflow-hidden text-ellipsis whitespace-normal">
+            {post.description}
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Tags: {post.tags?.map((tag) => tag.tag).join(", ") || "No tags"}
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Upvotes: {post.upvotes} | Downvotes: {post.downvotes}
+          </p>
         </div>
-      </div>
+      </Link>
+    ))}
+  </div>
+</div>
 
       {/* Pagination */}
       <div className="flex justify-center space-x-2 mt-6">
