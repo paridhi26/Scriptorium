@@ -1,8 +1,10 @@
+// Import necessary libraries and context
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 
+// Define the Post interface
 interface Post {
   id: string;
   title: string;
@@ -17,7 +19,10 @@ interface Post {
 }
 
 const Blogs = () => {
+  // Use authentication context
   const { loggedIn, id: userId } = useAuth();
+
+  // State for posts, pagination, loading, errors, search, and creating posts
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(5);
@@ -34,6 +39,7 @@ const Blogs = () => {
     tags: "",
   });
 
+  // Fetch posts on component mount
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -49,13 +55,16 @@ const Blogs = () => {
     fetchPosts();
   }, []);
 
+  // Handle search functionality
   const handleSearch = async () => {
     setLoading(true);
     try {
       if (!searchQuery.trim()) {
+        // Fetch all posts if no search query
         const response = await axios.get<Post[]>("/api/posts");
         setPosts(response.data);
       } else {
+        // Fetch posts matching the search query
         const response = await axios.get<Post[]>("/api/visitors/searchBlogPost", {
           params: { query: searchQuery },
         });
@@ -68,6 +77,7 @@ const Blogs = () => {
     }
   };
 
+  // Handle reporting a post
   const handleReport = async () => {
     if (!reportingPostId || !reportReason.trim()) {
       setError("Please provide a reason for reporting.");
@@ -97,6 +107,7 @@ const Blogs = () => {
     }
   };
 
+  // Handle creating a new post
   const handleCreatePost = async () => {
     if (!newPostData.title || !newPostData.description || !newPostData.content) {
       alert("Please fill out all required fields.");
@@ -128,6 +139,7 @@ const Blogs = () => {
     }
   };
 
+  // Sorting functions
   const sortPostsByUpvotes = () => {
     const sorted = [...posts].sort((a, b) => b.upvotes - a.upvotes);
     setPosts(sorted);
@@ -143,6 +155,7 @@ const Blogs = () => {
     setPosts(sorted);
   };
 
+  // Pagination logic
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
@@ -151,6 +164,7 @@ const Blogs = () => {
     setCurrentPage(pageNumber);
   };
 
+  // Loading and error handling
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen">
@@ -186,6 +200,7 @@ const Blogs = () => {
         </button>
       </div>
 
+      {/* Sorting Buttons */}
       <div className="mb-4 flex justify-end space-x-4">
         <button
           onClick={sortPostsByUpvotes}
@@ -207,7 +222,7 @@ const Blogs = () => {
         </button>
       </div>
 
-      {/* Blog Posts */}
+      {/* Display Posts */}
       <div className="overflow-x-auto whitespace-nowrap py-4">
         <div className="flex space-x-6">
           {currentPosts.map((post) => (
@@ -344,6 +359,7 @@ const Blogs = () => {
 };
 
 export default Blogs;
+
 
 
 
