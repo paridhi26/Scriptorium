@@ -1,9 +1,10 @@
-
+// Import necessary libraries and hooks
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { useRouter } from "next/router";
 
+// Interfaces for reported posts and comments
 interface Report {
   id: number;
   reason: string;
@@ -26,14 +27,17 @@ interface ReportedComment {
 }
 
 const AdminPage = () => {
+  // Authentication and user data
   const { user, loggedIn } = useAuth();
-  const [reportedPosts, setReportedPosts] = useState<ReportedPost[]>([]);
-  const [reportedComments, setReportedComments] = useState<ReportedComment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [reportedPosts, setReportedPosts] = useState<ReportedPost[]>([]); // State for reported posts
+  const [reportedComments, setReportedComments] = useState<ReportedComment[]>([]); // State for reported comments
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState<string | null>(null); // Error state
   const router = useRouter();
 
+  // Fetch reported content when the page loads
   useEffect(() => {
+    // Redirect if not logged in or not an admin
     if (!loggedIn || user?.role !== "ADMIN") {
       router.push("/");
       return;
@@ -47,6 +51,7 @@ const AdminPage = () => {
           },
         });
 
+        // Update state with reported posts and comments
         setReportedPosts(response.data.reportedPosts);
         setReportedComments(response.data.reportedComments);
       } catch (err: any) {
@@ -59,6 +64,7 @@ const AdminPage = () => {
     fetchReportedContent();
   }, [loggedIn, user, router]);
 
+  // Handle hiding content (post or comment)
   const handleHideContent = async (contentId: number, contentType: "post" | "comment") => {
     try {
       await axios.put(
@@ -71,6 +77,7 @@ const AdminPage = () => {
         }
       );
 
+      // Update the state to reflect the hidden content
       if (contentType === "post") {
         setReportedPosts((prev) =>
           prev.map((post) =>
@@ -89,6 +96,7 @@ const AdminPage = () => {
     }
   };
 
+  // Show unauthorized message if not admin
   if (!loggedIn || user?.role !== "ADMIN") {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -97,6 +105,7 @@ const AdminPage = () => {
     );
   }
 
+  // Show loading spinner while content is being fetched
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -105,6 +114,7 @@ const AdminPage = () => {
     );
   }
 
+  // Show error message if there was an issue fetching data
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -117,6 +127,7 @@ const AdminPage = () => {
     <div className="max-w-6xl mx-auto p-6 space-y-10">
       <h1 className="text-4xl font-bold text-center">Admin Dashboard</h1>
 
+      {/* Display reported posts */}
       <div>
         <h2 className="text-2xl font-semibold mb-4">Reported Posts</h2>
         <div className="overflow-x-auto">
@@ -154,6 +165,7 @@ const AdminPage = () => {
         </div>
       </div>
 
+      {/* Display reported comments */}
       <div>
         <h2 className="text-2xl font-semibold mb-4">Reported Comments</h2>
         <div className="overflow-x-auto">
@@ -195,6 +207,9 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+
+
+
 
 
 
