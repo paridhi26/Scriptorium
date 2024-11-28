@@ -15,13 +15,33 @@ const searchTemplatePaginated = async (req: NextApiRequest, res: NextApiResponse
   }
 
   try {
-    // Perform the search query in the database (use Prisma to filter based on `query`)
+    // Convert the query to lowercase
+    const lowercasedQuery = (query as string).toLowerCase();
+
+    // Perform the search query in the database
     const codeTemplates = await prisma.codeTemplate.findMany({
       where: {
-        title: {
-          contains: query, // Use `query` to search for templates that contain the string
-          // Remove `mode: 'insensitive'` and instead use a lowercased comparison
-        },
+        OR: [
+          {
+            title: {
+              contains: lowercasedQuery, // Assume data is already in lowercase
+            },
+          },
+          {
+            description: {
+              contains: lowercasedQuery, // Assume data is already in lowercase
+            },
+          },
+          {
+            tags: {
+              some: {
+                tag: {
+                  contains: lowercasedQuery, // Assume data is already in lowercase
+                },
+              },
+            },
+          },
+        ],
       },
       skip: (pageInt - 1) * pageSizeInt, // Paginate by skipping a number of results
       take: pageSizeInt, // Limit the results per page
@@ -36,9 +56,27 @@ const searchTemplatePaginated = async (req: NextApiRequest, res: NextApiResponse
     // Count the total number of templates matching the query
     const totalTemplates = await prisma.codeTemplate.count({
       where: {
-        title: {
-          contains: query,
-        },
+        OR: [
+          {
+            title: {
+              contains: lowercasedQuery, // Assume data is already in lowercase
+            },
+          },
+          {
+            description: {
+              contains: lowercasedQuery, // Assume data is already in lowercase
+            },
+          },
+          {
+            tags: {
+              some: {
+                tag: {
+                  contains: lowercasedQuery, // Assume data is already in lowercase
+                },
+              },
+            },
+          },
+        ],
       },
     });
 
