@@ -22,6 +22,7 @@ const Blogs = () => {
   const [postsPerPage] = useState(5); // Customize posts per page
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState(""); // Search query state
   const [reportingPostId, setReportingPostId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState<string>("");
   const [creatingPost, setCreatingPost] = useState(false); // Track creating post state
@@ -46,6 +47,20 @@ const Blogs = () => {
 
     fetchPosts();
   }, []);
+
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get<Post[]>("/api/visitors/searchBlogPost", {
+        params: { query: searchQuery },
+      });
+      setPosts(response.data);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to search posts");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleReport = async () => {
     if (!reportingPostId || !reportReason.trim()) {
@@ -147,6 +162,23 @@ const Blogs = () => {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">Blog Posts</h1>
+
+      {/* Search Bar */}
+      <div className="mb-6 flex justify-center">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search by title, tags, description, or content..."
+          className="px-4 py-2 border rounded-md w-2/3 mr-4"
+        />
+        <button
+          onClick={handleSearch}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Search
+        </button>
+      </div>
 
       <div className="mb-4 flex justify-end space-x-4">
         <button
@@ -317,6 +349,49 @@ const Blogs = () => {
 };
 
 export default Blogs;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
