@@ -1,7 +1,9 @@
+// Import necessary libraries and components
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { CodeIcon, BookOpenIcon } from "@heroicons/react/outline";
 
+// Define the template interface
 interface Template {
   id: string;
   title: string;
@@ -10,6 +12,7 @@ interface Template {
   downvotes: number;
 }
 
+// Define the blog post interface
 interface BlogPost {
   id: string;
   title: string;
@@ -19,10 +22,11 @@ interface BlogPost {
 }
 
 const Home: React.FC = () => {
+  // State for storing templates and blog posts
   const [templates, setTemplates] = useState<Template[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 
-  // Fetch templates and blog posts from the backend
+  // Fetch templates and blog posts when the component mounts
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
@@ -48,7 +52,7 @@ const Home: React.FC = () => {
     fetchBlogPosts();
   }, []);
 
-  // Optimistic update for upvote/downvote actions
+  // Handle upvoting a template
   const handleUpvoteTemplate = async (id: string) => {
     setTemplates((prev) =>
       prev.map((template) =>
@@ -79,6 +83,7 @@ const Home: React.FC = () => {
     }
   };
 
+  // Handle downvoting a template
   const handleDownvoteTemplate = async (id: string) => {
     setTemplates((prev) =>
       prev.map((template) =>
@@ -109,6 +114,7 @@ const Home: React.FC = () => {
     }
   };
 
+  // Handle upvoting a blog post
   const handleUpvoteBlog = async (id: string) => {
     setBlogPosts((prev) =>
       prev.map((post) =>
@@ -139,6 +145,7 @@ const Home: React.FC = () => {
     }
   };
 
+  // Handle downvoting a blog post
   const handleDownvoteBlog = async (id: string) => {
     setBlogPosts((prev) =>
       prev.map((post) =>
@@ -169,21 +176,25 @@ const Home: React.FC = () => {
     }
   };
 
+  // Sort templates by upvotes
   const sortTemplatesByUpvotes = () => {
     const sorted = [...templates].sort((a, b) => b.upvotes - a.upvotes);
     setTemplates(sorted);
   };
 
+  // Sort templates by downvotes
   const sortTemplatesByDownvotes = () => {
     const sorted = [...templates].sort((a, b) => b.downvotes - a.downvotes);
     setTemplates(sorted);
   };
 
+  // Sort blog posts by upvotes
   const sortBlogPostsByUpvotes = () => {
     const sorted = [...blogPosts].sort((a, b) => b.upvotes - a.upvotes);
     setBlogPosts(sorted);
   };
 
+  // Sort blog posts by downvotes
   const sortBlogPostsByDownvotes = () => {
     const sorted = [...blogPosts].sort((a, b) => b.downvotes - a.downvotes);
     setBlogPosts(sorted);
@@ -191,30 +202,32 @@ const Home: React.FC = () => {
 
   return (
     <>
+      {/* Hero Section */}
       <div className="bg-gray-100 py-20">
-  <div className="container mx-auto text-center px-4">
-    <h1 className="text-5xl font-extrabold mb-4 text-gray-800">
-      Welcome to Scriptorium
-    </h1>
-    <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-600">
-      Write, execute, and share code in multiple programming languages.
-      Join our community of developers today!
-    </p>
-    <div className="flex justify-center space-x-4">
-      <Link href="/editor">
-        <button className="bg-blue-500 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-600">
-          Launch Online Editor
-        </button>
-      </Link>
-      <Link href="/signup">
-        <button className="bg-green-500 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-green-600">
-          Sign Up Today
-        </button>
-      </Link>
-    </div>
-  </div>
-</div>
+        <div className="container mx-auto text-center px-4">
+          <h1 className="text-5xl font-extrabold mb-4 text-gray-800">
+            Welcome to Scriptorium
+          </h1>
+          <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-600">
+            Write, execute, and share code in multiple programming languages.
+            Join our community of developers today!
+          </p>
+          <div className="flex justify-center space-x-4">
+            <Link href="/editor">
+              <button className="bg-blue-500 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-600">
+                Launch Online Editor
+              </button>
+            </Link>
+            <Link href="/signup">
+              <button className="bg-green-500 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-green-600">
+                Sign Up Today
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
 
+      {/* Templates Section */}
       <div className="container mx-auto px-4 py-16">
         <section className="mb-16">
           <div className="flex justify-between items-center mb-4">
@@ -272,6 +285,7 @@ const Home: React.FC = () => {
           </div>
         </section>
 
+        {/* Blog Posts Section */}
         <section>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-3xl font-bold text-gray-800 flex items-center">
@@ -333,6 +347,8 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+
 
 
 
