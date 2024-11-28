@@ -20,13 +20,13 @@ const Blogs = () => {
   const { loggedIn, id: userId } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(5); // Customize posts per page
+  const [postsPerPage] = useState(5);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
-  const [searchQuery, setSearchQuery] = useState(""); // Search query state
+  const [searchQuery, setSearchQuery] = useState("");
   const [reportingPostId, setReportingPostId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState<string>("");
-  const [creatingPost, setCreatingPost] = useState(false); // Track creating post state
+  const [creatingPost, setCreatingPost] = useState(false);
   const [newPostData, setNewPostData] = useState({
     title: "",
     description: "",
@@ -52,10 +52,15 @@ const Blogs = () => {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const response = await axios.get<Post[]>("/api/visitors/searchBlogPost", {
-        params: { query: searchQuery },
-      });
-      setPosts(response.data);
+      if (!searchQuery.trim()) {
+        const response = await axios.get<Post[]>("/api/posts");
+        setPosts(response.data);
+      } else {
+        const response = await axios.get<Post[]>("/api/visitors/searchBlogPost", {
+          params: { query: searchQuery },
+        });
+        setPosts(response.data);
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to search posts");
     } finally {
@@ -202,27 +207,25 @@ const Blogs = () => {
         </button>
       </div>
 
-      {/* Horizontal Scrollable Blog Posts */}
+      {/* Blog Posts */}
       <div className="overflow-x-auto whitespace-nowrap py-4">
-  <div className="flex space-x-6">
-    {currentPosts.map((post) => (
-      <Link href={`/blog/${post.id}`} key={post.id} passHref>
-        <div className="inline-block min-w-[300px] max-w-[300px] p-6 border rounded-lg shadow-lg bg-white cursor-pointer hover:shadow-xl transition-shadow">
-          <h2 className="text-xl font-semibold text-blue-600 truncate">{post.title}</h2>
-          <p className="text-gray-600 mt-2 line-clamp-3 overflow-hidden text-ellipsis whitespace-normal">
-            {post.description}
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Tags: {post.tags?.map((tag) => tag.tag).join(", ") || "No tags"}
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Upvotes: {post.upvotes} | Downvotes: {post.downvotes}
-          </p>
+        <div className="flex space-x-6">
+          {currentPosts.map((post) => (
+            <Link href={`/blog/${post.id}`} key={post.id} passHref>
+              <div className="inline-block min-w-[300px] max-w-[300px] p-6 border rounded-lg bg-white">
+                <h2 className="text-xl font-semibold text-blue-600 truncate">{post.title}</h2>
+                <p className="text-gray-600 mt-2 line-clamp-3 overflow-hidden">{post.description}</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Tags: {post.tags.map((tag) => tag.tag).join(", ")}
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Upvotes: {post.upvotes} | Downvotes: {post.downvotes}
+                </p>
+              </div>
+            </Link>
+          ))}
         </div>
-      </Link>
-    ))}
-  </div>
-</div>
+      </div>
 
       {/* Pagination */}
       <div className="flex justify-center space-x-2 mt-6">
@@ -341,6 +344,9 @@ const Blogs = () => {
 };
 
 export default Blogs;
+
+
+
 
 
 
