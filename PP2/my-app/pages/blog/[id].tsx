@@ -68,8 +68,19 @@ const BlogDetail = () => {
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
+  
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      setCommentError("You must be logged in to add comments.");
+      return;
+    }
+  
     try {
-      await axios.post(`/api/posts/${id}/comments`, { content: newComment });
+      await axios.post(`/api/posts/${id}/comments`, { content: newComment }, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
       setComments((prev) => [
         ...prev,
         { id: `${Date.now()}`, content: newComment, createdAt: new Date().toISOString() },
@@ -80,6 +91,7 @@ const BlogDetail = () => {
       setCommentError("Failed to add comment.");
     }
   };
+  
 
   if (loading)
     return (
@@ -183,74 +195,3 @@ const BlogDetail = () => {
 };
 
 export default BlogDetail;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
