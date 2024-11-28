@@ -1,7 +1,9 @@
+// Import necessary libraries and hooks
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 
+// Define interfaces for user dashboard, blog posts, and templates
 interface UserDashboard {
   id: string;
   firstName: string;
@@ -26,6 +28,7 @@ interface Template {
 }
 
 const UserDashboard = () => {
+  // State for user data, posts, templates, loading, error, and edit mode
   const [userData, setUserData] = useState<UserDashboard | null>(null);
   const [userPosts, setUserPosts] = useState<BlogPost[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -34,9 +37,9 @@ const UserDashboard = () => {
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<UserDashboard>>({});
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = router.query; // Get user ID from router query
 
-  // Fetch user data, blog posts, and templates
+  // Fetch user data, blog posts, and templates on component mount
   useEffect(() => {
     const fetchData = async () => {
       if (!id || typeof id !== "string") return;
@@ -78,17 +81,20 @@ const UserDashboard = () => {
     fetchData();
   }, [id, router]);
 
+  // Handle input field changes for user data form
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle file input changes for avatar
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFormData((prev) => ({ ...prev, avatar: e.target.files[0] }));
     }
   };
 
+  // Handle updating user data
   const handleUpdate = async () => {
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
@@ -116,6 +122,7 @@ const UserDashboard = () => {
     }
   };
 
+  // Handle deleting a template
   const handleDeleteTemplate = async (templateId: string) => {
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
@@ -134,11 +141,12 @@ const UserDashboard = () => {
     }
   };
 
+  // Handle editing a template
   const handleEditTemplate = (templateId: string) => {
-    // Redirect or open modal to edit the template
-    router.push(`api/users/editTemp?id=${templateId}`);
+    router.push(`api/users/editTemp?id=${templateId}`); // Redirect to edit page
   };
 
+  // Show loading spinner while fetching data
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -147,6 +155,7 @@ const UserDashboard = () => {
     );
   }
 
+  // Show login prompt if no user data is found
   if (!userData) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-6">
@@ -327,3 +336,14 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
+
+
+
+
+
+
+
+
+
+
+
