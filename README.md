@@ -73,9 +73,8 @@ In Scriptorium, user stories follow these conventions:
 
 ### Prerequisites  
 Ensure you have the following installed before setting up Scriptorium:  
-- Node.js  
-- PostgreSQL (or any compatible database)  
-- Docker (optional, for running in a containerized environment)  
+- Node.js   
+- Docker 
 
 ### Installation  
 
