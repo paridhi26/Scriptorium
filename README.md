@@ -1,5 +1,7 @@
 # Scriptorium: A New Way to Write Code  
 
+Adapted from https://www.cs.toronto.edu/~kianoosh/courses/csc309/resources/handouts/?source=pp1
+
 Scriptorium is an innovative online platform designed for writing, executing, and sharing code in multiple programming languages. Inspired by the historical scriptorium—where manuscripts were created and preserved—this platform modernizes the concept for the digital era. It provides a secure space for programmers, tech enthusiasts, and learners to experiment, refine, and save their code as reusable templates. Whether you need to test a quick snippet or build a structured example, Scriptorium equips you with the tools to bring your ideas to life.  
 
 ---
