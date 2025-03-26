@@ -79,7 +79,7 @@ Ensure you have the following installed before setting up Scriptorium:
 ### Installation  
 
 ```sh
-git clone https://github.com/yourusername/scriptorium.git
+git clone https://github.com/paridhi26/Scriptorium.git
 cd PP2/my-app
 npm install
 npm run dev 
